@@ -42,21 +42,19 @@ class AuthCubit extends HydratedCubit<AuthState> {
 
   // 🧾 REGISTER
   Future<void> register({
-    required String firstName,
-    required String lastName,
     required String email,
-    required String phone,
     required String password,
+    required String fullName,
+    required String phoneNumber,
   }) async {
     emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
 
     final result = await _registerUseCase(
       RegisterParam(
-        firstName: firstName,
         email: email,
-        phone: phone,
         password: password,
-        lastName: lastName,
+        fullName: fullName,
+        phoneNumber: phoneNumber,
       ),
     );
 

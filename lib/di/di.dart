@@ -5,11 +5,11 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trimitra_putra_mandiri/config.dart';
-import 'package:trimitra_putra_mandiri/data/utils/dio_token_interceptor.dart';
-import 'package:trimitra_putra_mandiri/domain/usecases/auth/register_usecase.dart';
-import 'package:trimitra_putra_mandiri/presentations/auth/cubit/auth_cubit.dart';
-import 'package:trimitra_putra_mandiri/presentations/home/cubit/home_cubit.dart';
+import 'package:jalan_yuk/config.dart';
+import 'package:jalan_yuk/data/utils/dio_token_interceptor.dart';
+import 'package:jalan_yuk/domain/usecases/auth/register_usecase.dart';
+import 'package:jalan_yuk/presentations/auth/cubit/auth_cubit.dart';
+import 'package:jalan_yuk/presentations/home/cubit/home_cubit.dart';
 
 import '../core/network/network.dart';
 import '../data/data.dart';

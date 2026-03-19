@@ -30,24 +30,22 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> register(
-    String firstName,
-    String lastName,
-    String email,
-    String phone,
-    String password,
-  ) async {
+  Future<Either<Failure, String>> register({
+    required String email,
+    required String password,
+    required String fullName,
+    required String phoneNumber,
+  }) async {
     final isConnected = await networkInfo.isConnected;
     if (!isConnected) {
       return Left(Failure.noConnection());
     }
     try {
       final message = await api.register(
-        firstName,
-        lastName,
-        email,
-        phone,
-        password,
+        email: email,
+        password: password,
+        fullName: fullName,
+        phoneNumber: phoneNumber,
       );
       return Right(message);
     } catch (e) {

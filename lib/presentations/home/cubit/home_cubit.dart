@@ -3,12 +3,11 @@
 import 'dart:io';
 
 import 'package:geolocator/geolocator.dart';
-import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trimitra_putra_mandiri/presentations/home/cubit/home_state.dart';
+import 'package:jalan_yuk/presentations/home/cubit/home_state.dart';
 
 class HomeCubit extends HydratedCubit<HomeState> {
   HomeCubit() : super(HomeState());

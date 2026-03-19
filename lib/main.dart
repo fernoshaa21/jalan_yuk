@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:trimitra_putra_mandiri/config.dart';
-import 'package:trimitra_putra_mandiri/di/di.dart';
+import 'package:jalan_yuk/config.dart';
+import 'package:jalan_yuk/di/di.dart';
 
 import 'app.dart';
 

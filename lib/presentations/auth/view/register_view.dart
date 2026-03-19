@@ -1,27 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trimitra_putra_mandiri/presentations/auth/cubit/auth_cubit.dart';
-import 'package:trimitra_putra_mandiri/presentations/auth/cubit/auth_state.dart';
-
-import '../../../di/di.dart';
+import 'package:jalan_yuk/presentations/auth/cubit/auth_cubit.dart';
+import 'package:jalan_yuk/presentations/auth/cubit/auth_state.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
   @override
   State<RegisterView> createState() => _RegisterViewState();
-  @override
-  Widget wrappedRoute(BuildContext context) {
-    return BlocProvider<AuthCubit>(create: (context) => di(), child: this);
-  }
 }
 
 class _RegisterViewState extends State<RegisterView> {
   final _formKey = GlobalKey<FormState>();
 
-  final _firstNameC = TextEditingController();
-  final _lastNameC = TextEditingController();
+  final _fullnameC = TextEditingController();
+
   final _emailC = TextEditingController();
   final _phoneC = TextEditingController();
   final _passwordC = TextEditingController();
@@ -29,8 +23,8 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   void dispose() {
-    _firstNameC.dispose();
-    _lastNameC.dispose();
+    _fullnameC.dispose();
+
     _emailC.dispose();
     _phoneC.dispose();
     _passwordC.dispose();
@@ -105,26 +99,13 @@ class _RegisterViewState extends State<RegisterView> {
                         const SizedBox(height: 32),
 
                         // First & Last name
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _AppTextField(
-                                label: 'First Name',
-                                hint: 'Your first name',
-                                prefixIcon: Icons.person_outline,
-                                controller: _firstNameC,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _AppTextField(
-                                label: 'Last Name',
-                                hint: 'Your last name',
-                                controller: _lastNameC,
-                              ),
-                            ),
-                          ],
+                        _AppTextField(
+                          label: 'Full Name',
+                          hint: 'Your full name',
+                          prefixIcon: Icons.person_outline,
+                          controller: _fullnameC,
                         ),
+
                         const SizedBox(height: 16),
 
                         // Email
@@ -205,11 +186,10 @@ class _RegisterViewState extends State<RegisterView> {
                                     }
 
                                     context.read<AuthCubit>().register(
-                                      firstName: _firstNameC.text.trim(),
-                                      lastName: _lastNameC.text.trim(),
                                       email: _emailC.text.trim(),
-                                      phone: _phoneC.text.trim(),
                                       password: _passwordC.text.trim(),
+                                      fullName: _fullnameC.text.trim(),
+                                      phoneNumber: _phoneC.text.trim(),
                                     );
                                   },
                             child: Ink(

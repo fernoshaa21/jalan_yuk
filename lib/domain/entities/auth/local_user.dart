@@ -3,7 +3,6 @@
 //     final localUser = localUserFromJson(jsonString);
 
 import 'package:json_annotation/json_annotation.dart';
-import 'dart:convert';
 
 part 'local_user.g.dart';
 

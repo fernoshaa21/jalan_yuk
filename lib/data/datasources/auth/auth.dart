@@ -5,13 +5,12 @@ import '../../../domain/domain.dart';
 
 abstract class AuthApi {
   Future<ApiResponse<LocalUser>> login(String email, String password);
-  Future<String> register(
-    String firstName,
-    String lastName,
-    String email,
-    String phone,
-    String password,
-  );
+  Future<String> register({
+    required String email,
+    required String password,
+    required String fullName,
+    required String phoneNumber,
+  });
 }
 
 class AuthApiImpl implements AuthApi {
@@ -21,7 +20,7 @@ class AuthApiImpl implements AuthApi {
   @override
   Future<ApiResponse<LocalUser>> login(String email, String password) async {
     final response = await dio.post(
-      '/login',
+      '/auth/login',
       data: {'email': email, 'password': password},
     );
     return ApiResponse.fromResponse(response, (json) {
@@ -30,21 +29,19 @@ class AuthApiImpl implements AuthApi {
   }
 
   @override
-  Future<String> register(
-    String firstName,
-    String lastName,
-    String email,
-    String phone,
-    String password,
-  ) async {
+  Future<String> register({
+    required String email,
+    required String password,
+    required String fullName,
+    required String phoneNumber,
+  }) async {
     final response = await dio.post(
-      '/register',
+      '/auth/register',
       data: {
-        'first_name': firstName,
-        'last_name': lastName,
         'email': email,
-        'phone': phone,
         'password': password,
+        'fullName': fullName,
+        'phoneNumber': phoneNumber,
       },
       options: Options(
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},

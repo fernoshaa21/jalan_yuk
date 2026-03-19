@@ -2,8 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:trimitra_putra_mandiri/presentations/auth/cubit/auth_cubit.dart';
+import 'package:jalan_yuk/presentations/auth/cubit/auth_cubit.dart';
 
 // import 'package:flutter_news_app/config/flavor_config.dart';
 
