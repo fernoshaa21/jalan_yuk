@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jalan_yuk/core/core.dart';
 import 'package:jalan_yuk/presentations/auth/cubit/auth_cubit.dart';
 import 'package:jalan_yuk/presentations/auth/cubit/auth_state.dart';
 
@@ -20,10 +21,8 @@ class _RegisterViewState extends State<RegisterView> {
 
   bool _obscurePassword = true;
 
-  static const _emerald = Color(0xFF1F7A5A);
   static const _emeraldDark = Color(0xFF155D45);
   static const _softBorder = Color(0xFFE5E7EB);
-  static const _hintColor = Color(0xFF9CA3AF);
 
   @override
   void dispose() {
@@ -220,51 +219,21 @@ class _RegisterViewState extends State<RegisterView> {
                     validatorMessage: 'Phone Number tidak boleh kosong',
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: isLoading
-                          ? null
-                          : () {
-                              if (!(_formKey.currentState?.validate() ??
-                                  false)) {
-                                return;
-                              }
+                  JalanYukButton(
+                    label: 'Register',
+                    isLoading: isLoading,
+                    onPressed: () {
+                      if (!(_formKey.currentState?.validate() ?? false)) {
+                        return;
+                      }
 
-                              context.read<AuthCubit>().register(
-                                email: _emailC.text.trim(),
-                                password: _passwordC.text.trim(),
-                                fullName: _fullnameC.text.trim(),
-                                phoneNumber: _phoneC.text.trim(),
-                              );
-                            },
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: _emerald,
-                        disabledBackgroundColor: _emerald.withOpacity(0.65),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text(
-                              'Register',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 18,
-                              ),
-                            ),
-                    ),
+                      context.read<AuthCubit>().register(
+                        email: _emailC.text.trim(),
+                        password: _passwordC.text.trim(),
+                        fullName: _fullnameC.text.trim(),
+                        phoneNumber: _phoneC.text.trim(),
+                      );
+                    },
                   ),
                   const SizedBox(height: 14),
                   Row(
@@ -339,8 +308,9 @@ class _RegisterViewState extends State<RegisterView> {
     String? Function(String?)? validator,
     bool isPassword = false,
   }) {
-    return TextFormField(
+    return JalanYukTextField(
       controller: controller,
+      hint: hint,
       keyboardType: keyboardType,
       obscureText: isPassword ? _obscurePassword : false,
       validator:
@@ -351,42 +321,20 @@ class _RegisterViewState extends State<RegisterView> {
             }
             return null;
           },
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(color: _hintColor),
-        prefixIcon: Icon(icon, color: const Color(0xFF4B5563), size: 21),
-        suffixIcon: isPassword
-            ? IconButton(
-                onPressed: () {
-                  setState(() => _obscurePassword = !_obscurePassword);
-                },
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                  color: const Color(0xFF6B7280),
-                ),
-              )
-            : null,
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.9),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 14,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _softBorder),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _softBorder),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _emerald, width: 1.3),
-        ),
-      ),
+      prefixIcon: Icon(icon, color: const Color(0xFF4B5563), size: 21),
+      suffixIcon: isPassword
+          ? IconButton(
+              onPressed: () {
+                setState(() => _obscurePassword = !_obscurePassword);
+              },
+              icon: Icon(
+                _obscurePassword
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                color: const Color(0xFF6B7280),
+              ),
+            )
+          : null,
     );
   }
 

@@ -3,3 +3,4 @@ export 'utilities/utilities.dart';
 export 'constants/constant.dart';
 export 'response/response.dart';
 export 'errors/errors.dart';
+export 'widgets/widgets.dart';

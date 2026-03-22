@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jalan_yuk/core/core.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -9,7 +11,6 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   static const _headerColor = Color(0xFF0E8A6A);
-  static const _activeChip = Color(0xFF0B7A5E);
 
   final List<String> _categories = const ['Adventure', 'Family', 'Romantic'];
   int _selectedCategory = 0;
@@ -64,7 +65,7 @@ class _HomeViewState extends State<HomeView> {
           children: [
             const Center(
               child: Text(
-                'BaliGo',
+                'JalanYuk',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 44,
@@ -139,31 +140,11 @@ class _HomeViewState extends State<HomeView> {
           ),
           child: GestureDetector(
             onTap: () => setState(() => _selectedCategory = index),
-            child: Container(
+            child: JalanYukChip(
+              label: _categories[index],
+              selected: isActive,
+              onTap: () => setState(() => _selectedCategory = index),
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              decoration: BoxDecoration(
-                color: isActive ? _activeChip : Colors.white,
-                borderRadius: BorderRadius.circular(13),
-                border: Border.all(
-                  color: isActive ? _activeChip : const Color(0xFFE5E7EB),
-                ),
-                boxShadow: [
-                  if (!isActive)
-                    const BoxShadow(
-                      color: Color(0x12000000),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                ],
-              ),
-              child: Text(
-                _categories[index],
-                style: TextStyle(
-                  color: isActive ? Colors.white : const Color(0xFF111827),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                ),
-              ),
             ),
           ),
         );
@@ -172,97 +153,12 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildFeaturedCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x16000000),
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
-            child: Image.asset(
-              'assets/images/rentara_map.png',
-              width: double.infinity,
-              height: 140,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'Batur Sunrise',
-                        style: TextStyle(
-                          color: Color(0xFF111827),
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.star_rounded,
-                            color: Color(0xFFFACC15),
-                            size: 20,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            '4.8 • 45.0k',
-                            style: TextStyle(
-                              color: Color(0xFF4B5563),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 10),
-                SizedBox(
-                  height: 48,
-                  width: 110,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: _activeChip,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Book',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return JalanYukActivityCard(
+      imagePath: 'assets/images/rentara_map.png',
+      title: 'Batur Sunrise',
+      ratingLabel: '4.8 • 45.0k',
+      priceLabel: 'Rp 420k',
+      onBookTap: () => context.pushNamed('activity_detail'),
     );
   }
 
@@ -270,14 +166,7 @@ class _HomeViewState extends State<HomeView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Popular Today',
-          style: TextStyle(
-            color: Color(0xFF111827),
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        const JalanYukSectionTitle(title: 'Popular Today'),
         const SizedBox(height: 10),
         Container(
           decoration: BoxDecoration(
