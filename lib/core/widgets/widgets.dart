@@ -1,5 +1,6 @@
 export 'jalan_yuk_activity_card.dart';
 export 'jalan_yuk_app_bar.dart';
+export 'jalan_yuk_bottom_navigation_bar.dart';
 export 'jalan_yuk_button.dart';
 export 'jalan_yuk_chip.dart';
 export 'jalan_yuk_colors.dart';

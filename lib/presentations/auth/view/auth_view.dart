@@ -40,7 +40,7 @@ class _AuthViewState extends State<AuthView> {
 
         // berhasil login
         if (state.status == AuthStatus.authenticated) {
-          context.goNamed('home');
+          context.goNamed('dashboard_home');
         }
       },
       builder: (context, state) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jalan_yuk/core/core.dart';
 
 class ActivityDetailView extends StatefulWidget {
@@ -188,8 +189,7 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
       label: 'Book Now',
       height: 54,
       onPressed: () {
-        // TODO: Integrasi route booking via GoRouter, contoh:
-        // context.pushNamed('booking', extra: {...});
+        context.pushNamed('booking');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Booking flow will be connected soon')),
         );
