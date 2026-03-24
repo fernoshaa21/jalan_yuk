@@ -51,12 +51,15 @@ void _useCases() {
 
   /// activities
   di.registerSingleton<GetActivitiesUseCase>(GetActivitiesUseCase(di()));
+  di.registerSingleton<GetFeaturedActivitiesUseCase>(
+    GetFeaturedActivitiesUseCase(di()),
+  );
 }
 
 void _cubits() {
   //Cubits use MultiBlocProvider (RegisterSingleton Injections)
   di.registerLazySingleton(() => AuthCubit(di(), di()));
-  di.registerLazySingleton(() => HomeCubit(di()));
+  di.registerLazySingleton(() => HomeCubit(di(), di()));
 }
 
 void _utils() {

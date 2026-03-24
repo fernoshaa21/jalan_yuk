@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -25,7 +26,11 @@ class _HomeViewState extends State<HomeView> {
 
   static const List<_CategoryFilter> _categories = [
     _CategoryFilter(label: 'All', queryValue: null),
+    _CategoryFilter(label: 'Adventure', queryValue: 'adventure'),
+    _CategoryFilter(label: 'Nature', queryValue: 'nature'),
+    _CategoryFilter(label: 'Culinary', queryValue: 'culinary'),
     _CategoryFilter(label: 'City Tour', queryValue: 'city-tour'),
+    _CategoryFilter(label: 'Water Sport', queryValue: 'water-sport'),
     _CategoryFilter(label: 'Culture', queryValue: 'culture'),
     _CategoryFilter(label: 'Family', queryValue: 'family'),
   ];
@@ -39,8 +44,9 @@ class _HomeViewState extends State<HomeView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cubit = context.read<HomeCubit>();
-      if (cubit.state.status == HomeActivitiesStatus.initial) {
-        cubit.loadInitialActivities(limit: 10);
+      if (cubit.state.popularStatus == HomeActivitiesStatus.initial &&
+          cubit.state.carouselStatus == HomeCarouselStatus.initial) {
+        cubit.loadInitialHomeData(carouselLimit: 6, popularLimit: 10);
       }
     });
   }
@@ -59,7 +65,7 @@ class _HomeViewState extends State<HomeView> {
     }
 
     if (_popularScrollController.position.extentAfter < 200) {
-      context.read<HomeCubit>().loadNextActivities();
+      context.read<HomeCubit>().loadNextFeaturedActivities();
     }
   }
 
@@ -74,10 +80,11 @@ class _HomeViewState extends State<HomeView> {
     _searchDebounce?.cancel();
     _searchDebounce = Timer(const Duration(milliseconds: 500), () {
       _scrollPopularToTop();
-      context.read<HomeCubit>().loadInitialActivities(
+      context.read<HomeCubit>().loadInitialHomeData(
         search: value,
         category: _categories[_selectedCategoryIndex].queryValue,
-        limit: 10,
+        carouselLimit: 6,
+        popularLimit: 10,
       );
     });
   }
@@ -86,15 +93,14 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final featured = _resolveFeaturedActivity(state.activities);
-        final popularItems = _popularItems(state.activities, featured);
+        final popularItems = state.popularActivities;
 
         return Scaffold(
           backgroundColor: Colors.white,
           body: SafeArea(
             child: RefreshIndicator(
               color: JalanYukColors.emerald,
-              onRefresh: () => context.read<HomeCubit>().refreshActivities(),
+              onRefresh: () => context.read<HomeCubit>().refreshHomeData(),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
@@ -108,7 +114,7 @@ class _HomeViewState extends State<HomeView> {
                         children: [
                           _buildCategoryChips(),
                           const SizedBox(height: 16),
-                          _buildFeaturedCard(featured),
+                          _buildCarouselSection(state),
                           const SizedBox(height: 18),
                           _buildPopularSection(
                             state: state,
@@ -223,10 +229,11 @@ class _HomeViewState extends State<HomeView> {
               onTap: () {
                 setState(() => _selectedCategoryIndex = index);
                 _scrollPopularToTop();
-                context.read<HomeCubit>().loadInitialActivities(
+                context.read<HomeCubit>().loadInitialHomeData(
                   search: _searchController.text,
                   category: _categories[index].queryValue,
-                  limit: 10,
+                  carouselLimit: 6,
+                  popularLimit: 10,
                 );
               },
               child: JalanYukChip(
@@ -235,10 +242,11 @@ class _HomeViewState extends State<HomeView> {
                 onTap: () {
                   setState(() => _selectedCategoryIndex = index);
                   _scrollPopularToTop();
-                  context.read<HomeCubit>().loadInitialActivities(
+                  context.read<HomeCubit>().loadInitialHomeData(
                     search: _searchController.text,
                     category: _categories[index].queryValue,
-                    limit: 10,
+                    carouselLimit: 6,
+                    popularLimit: 10,
                   );
                 },
                 padding: const EdgeInsets.symmetric(
@@ -253,21 +261,72 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildFeaturedCard(ActivitiesResponseData? featured) {
-    if (featured == null) {
-      return const SizedBox.shrink();
+  Widget _buildCarouselSection(HomeState state) {
+    if (state.isCarouselLoading) {
+      return const JalanYukStateView(type: JalanYukStateType.loading);
     }
 
-    final imagePath = _resolveImage(featured.imageUrl);
+    if (state.isCarouselError && !state.hasCarouselData) {
+      return JalanYukStateView(
+        type: JalanYukStateType.error,
+        title: 'Failed to load activities',
+        message: state.carouselErrorMessage,
+        onRetry: () => context.read<HomeCubit>().loadInitialHomeData(
+          search: _searchController.text,
+          category: _categories[_selectedCategoryIndex].queryValue,
+          carouselLimit: 6,
+          popularLimit: state.popularLimit,
+        ),
+      );
+    }
 
-    return JalanYukActivityCard(
-      imagePath: imagePath,
-      isNetworkImage: _isNetworkUrl(imagePath),
-      title: featured.title ?? '-',
-      ratingLabel: featured.rating ?? '4.8',
-      locationLabel: featured.location,
-      priceLabel: _formatPrice(featured.price),
-      onBookTap: () => context.pushNamed('activity_detail'),
+    if (state.isCarouselEmpty) {
+      return const JalanYukStateView(
+        type: JalanYukStateType.empty,
+        title: 'No activities available',
+        message: 'Please try again later.',
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = constraints.maxWidth;
+        final carouselHeight = (availableWidth * 0.70).clamp(226.0, 270.0);
+        final imageHeight = (carouselHeight * 0.56).clamp(120.0, 150.0);
+
+        return CarouselSlider.builder(
+          itemCount: state.carouselActivities.length,
+          options: CarouselOptions(
+            height: carouselHeight.toDouble(),
+            autoPlay: true,
+            enlargeCenterPage: true,
+            enlargeFactor: 0.06,
+            viewportFraction: 0.97,
+            padEnds: false,
+          ),
+          itemBuilder: (context, index, realIndex) {
+            final item = state.carouselActivities[index];
+            final imagePath = _resolveImage(item.imageUrl);
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: JalanYukActivityCard(
+                imagePath: imagePath,
+                isNetworkImage: _isNetworkUrl(imagePath),
+                title: item.title ?? '-',
+                ratingLabel: item.rating ?? '4.8',
+                locationLabel: item.location,
+                priceLabel: _formatPrice(item.price),
+                compact: true,
+                showBookButton: true,
+                imageHeight: imageHeight.toDouble(),
+                onTap: () => context.pushNamed('activity_detail'),
+                onBookTap: () => context.pushNamed('activity_detail'),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -280,146 +339,131 @@ class _HomeViewState extends State<HomeView> {
       children: [
         const JalanYukSectionTitle(title: 'Popular Today'),
         const SizedBox(height: 10),
-        if (state.isFirstPageLoading)
+        if (state.isPopularFirstPageLoading)
           const Padding(
             padding: EdgeInsets.only(top: 8),
             child: JalanYukStateView(type: JalanYukStateType.loading),
           )
-        else if (state.isError && !state.hasData)
+        else if (state.isPopularError && !state.hasPopularData)
           JalanYukStateView(
             type: JalanYukStateType.error,
             title: 'Failed to load activities',
-            message: state.errorMessage,
-            onRetry: () => context.read<HomeCubit>().loadInitialActivities(
+            message: state.popularErrorMessage,
+            onRetry: () => context.read<HomeCubit>().loadInitialHomeData(
               search: _searchController.text,
               category: _categories[_selectedCategoryIndex].queryValue,
-              limit: state.limit,
+              carouselLimit: 6,
+              popularLimit: state.popularLimit,
             ),
           )
-        else if (state.isEmpty)
+        else if (state.isPopularEmpty)
           const JalanYukStateView(
             type: JalanYukStateType.empty,
             title: 'No activities found',
             message: 'Try another keyword or filter.',
           )
         else ...[
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFEAEAEA)),
-            ),
-            child: SizedBox(
-              height: 340,
-              child: ListView.builder(
-                controller: _popularScrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: items.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == items.length) {
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-                      child: state.isLoadingMore
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: JalanYukColors.emerald,
-                              ),
-                            )
-                          : Center(
-                              child: Text(
-                                state.hasNextPage
-                                    ? 'Scroll ke bawah untuk memuat lagi...'
-                                    : 'No more activities',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: JalanYukColors.textSecondary,
-                                ),
-                              ),
-                            ),
-                    );
-                  }
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final listHeight = (constraints.maxWidth * 0.95).clamp(
+                280.0,
+                360.0,
+              );
 
-                  final item = items[index];
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.local_fire_department_rounded,
-                              color: Color(0xFFF59E0B),
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                item.title ?? '-',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Color(0xFF111827),
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600,
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFEAEAEA)),
+                ),
+                child: SizedBox(
+                  height: listHeight.toDouble(),
+                  child: ListView.builder(
+                    controller: _popularScrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: items.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == items.length) {
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                          child: state.isPopularLoadingMore
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: JalanYukColors.emerald,
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    state.popularHasNextPage
+                                        ? 'Scroll ke bawah untuk memuat lagi...'
+                                        : 'No more activities',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: JalanYukColors.textSecondary,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                        );
+                      }
+
+                      final item = items[index];
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 12,
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _formatPrice(item.price),
-                              style: const TextStyle(
-                                color: Color(0xFF111827),
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700,
-                              ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.local_fire_department_rounded,
+                                  color: Color(0xFFF59E0B),
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    item.title ?? '-',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Color(0xFF111827),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  _formatPrice(item.price),
+                                  style: const TextStyle(
+                                    color: Color(0xFF111827),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                      if (index != items.length - 1)
-                        const Divider(
-                          height: 1,
-                          thickness: 1,
-                          color: Color(0xFFEAEAEA),
-                        ),
-                    ],
-                  );
-                },
-              ),
-            ),
+                          ),
+                          if (index != items.length - 1)
+                            const Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: Color(0xFFEAEAEA),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ],
     );
-  }
-
-  ActivitiesResponseData? _resolveFeaturedActivity(
-    List<ActivitiesResponseData> activities,
-  ) {
-    if (activities.isEmpty) {
-      return null;
-    }
-
-    return activities.firstWhere(
-      (item) => item.isFeatured == true,
-      orElse: () => activities.first,
-    );
-  }
-
-  List<ActivitiesResponseData> _popularItems(
-    List<ActivitiesResponseData> items,
-    ActivitiesResponseData? featured,
-  ) {
-    if (items.isEmpty || featured == null) {
-      return items;
-    }
-
-    final featuredId = featured.id;
-    return items.where((item) => item.id != featuredId).toList();
   }
 
   String _resolveImage(String? imageUrl) {
@@ -436,27 +480,86 @@ class _HomeViewState extends State<HomeView> {
 
   String _formatPrice(String? raw) {
     if (raw == null || raw.trim().isEmpty) {
-      return 'Rp -';
+      return '-';
     }
 
     final text = raw.trim();
     final lower = text.toLowerCase();
 
-    if (lower.contains('rp') || lower.contains('k')) {
+    if (lower.contains('jt')) {
       return text;
     }
 
-    final numericText = text.replaceAll(RegExp(r'[^0-9]'), '');
-    final value = int.tryParse(numericText);
+    if (lower.contains('k')) {
+      return text.replaceAll(RegExp(r'k', caseSensitive: false), 'K');
+    }
+
+    final numericRaw = text.replaceAll(RegExp(r'[^0-9.,]'), '');
+    final value = _parseFlexibleNumber(numericRaw);
     if (value == null) {
       return text;
     }
 
-    if (value >= 1000) {
-      return 'Rp ${value ~/ 1000}k';
+    if (value >= 1000000) {
+      return '${_formatCompactNumber(value / 1000000)}jt';
     }
 
-    return 'Rp $value';
+    if (value >= 1000) {
+      return '${_formatCompactNumber(value / 1000)}K';
+    }
+
+    final isDecimalShort = RegExp(r'^\d+[.,]\d{1,2}$').hasMatch(numericRaw);
+    if (isDecimalShort) {
+      return '${_formatCompactNumber(value)}K';
+    }
+
+    return _formatCompactNumber(value);
+  }
+
+  double? _parseFlexibleNumber(String value) {
+    if (value.isEmpty) {
+      return null;
+    }
+
+    var text = value;
+    final lastDot = text.lastIndexOf('.');
+    final lastComma = text.lastIndexOf(',');
+
+    if (lastDot != -1 && lastComma != -1) {
+      final decimalIndex = lastDot > lastComma ? lastDot : lastComma;
+      final decimalSeparator = text[decimalIndex];
+      final thousandSeparator = decimalSeparator == '.' ? ',' : '.';
+
+      text = text.replaceAll(thousandSeparator, '');
+      text = text.replaceAll(decimalSeparator, '.');
+      return double.tryParse(text);
+    }
+
+    if (lastDot != -1 || lastComma != -1) {
+      final separatorIndex = lastDot != -1 ? lastDot : lastComma;
+      final separator = text[separatorIndex];
+      final fractionLength = text.length - separatorIndex - 1;
+
+      final isDecimal = fractionLength > 0 && fractionLength <= 2;
+      if (isDecimal) {
+        text = text.replaceAll(separator, '.');
+        return double.tryParse(text);
+      }
+
+      text = text.replaceAll(separator, '');
+      return double.tryParse(text);
+    }
+
+    return double.tryParse(text);
+  }
+
+  String _formatCompactNumber(double value) {
+    final oneDecimal = (value * 10).round() / 10;
+    if (oneDecimal % 1 == 0) {
+      return oneDecimal.toInt().toString();
+    }
+
+    return oneDecimal.toStringAsFixed(1).replaceAll('.0', '');
   }
 }
 

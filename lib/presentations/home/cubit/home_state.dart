@@ -14,27 +14,39 @@ enum HomeActivitiesStatus {
   error,
 }
 
+enum HomeCarouselStatus { initial, loading, success, empty, error }
+
 @freezed
 abstract class HomeState with _$HomeState {
   HomeState._();
   factory HomeState({
-    @Default(HomeActivitiesStatus.initial) HomeActivitiesStatus status,
+    @Default(HomeCarouselStatus.initial) HomeCarouselStatus carouselStatus,
     @Default(<ActivitiesResponseData>[])
-    List<ActivitiesResponseData> activities,
-    @Default(1) int page,
-    @Default(10) int limit,
-    @Default(true) bool hasNextPage,
+    List<ActivitiesResponseData> carouselActivities,
+    String? carouselErrorMessage,
+    @Default(HomeActivitiesStatus.initial) HomeActivitiesStatus popularStatus,
+    @Default(<ActivitiesResponseData>[])
+    List<ActivitiesResponseData> popularActivities,
+    @Default(1) int popularPage,
+    @Default(10) int popularLimit,
+    @Default(true) bool popularHasNextPage,
     String? search,
     String? category,
-    bool? featured,
-    String? errorMessage,
+    String? popularErrorMessage,
   }) = _HomeState;
 
-  bool get isFirstPageLoading => status == HomeActivitiesStatus.loading;
-  bool get isLoadingMore => status == HomeActivitiesStatus.loadingMore;
-  bool get isEmpty => status == HomeActivitiesStatus.empty;
-  bool get isError => status == HomeActivitiesStatus.error;
-  bool get hasData => activities.isNotEmpty;
+  bool get isCarouselLoading => carouselStatus == HomeCarouselStatus.loading;
+  bool get isCarouselEmpty => carouselStatus == HomeCarouselStatus.empty;
+  bool get isCarouselError => carouselStatus == HomeCarouselStatus.error;
+  bool get hasCarouselData => carouselActivities.isNotEmpty;
+
+  bool get isPopularFirstPageLoading =>
+      popularStatus == HomeActivitiesStatus.loading;
+  bool get isPopularLoadingMore =>
+      popularStatus == HomeActivitiesStatus.loadingMore;
+  bool get isPopularEmpty => popularStatus == HomeActivitiesStatus.empty;
+  bool get isPopularError => popularStatus == HomeActivitiesStatus.error;
+  bool get hasPopularData => popularActivities.isNotEmpty;
 
   factory HomeState.fromJson(Map<String, dynamic> json) =>
       _$HomeStateFromJson(json);

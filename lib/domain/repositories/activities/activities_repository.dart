@@ -7,4 +7,8 @@ abstract class ActivitiesRepository {
   Future<Either<Failure, ActivitiesResponse>> getActivities(
     ActivitiesQuery query,
   );
+
+  Future<Either<Failure, ActivitiesResponse>> getFeaturedActivities(
+    FeaturedActivitiesQuery query,
+  );
 }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeState {
 
- HomeActivitiesStatus get status; List<ActivitiesResponseData> get activities; int get page; int get limit; bool get hasNextPage; String? get search; String? get category; bool? get featured; String? get errorMessage;
+ HomeCarouselStatus get carouselStatus; List<ActivitiesResponseData> get carouselActivities; String? get carouselErrorMessage; HomeActivitiesStatus get popularStatus; List<ActivitiesResponseData> get popularActivities; int get popularPage; int get popularLimit; bool get popularHasNextPage; String? get search; String? get category; String? get popularErrorMessage;
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $HomeStateCopyWith<HomeState> get copyWith => _$HomeStateCopyWithImpl<HomeState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.activities, activities)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.search, search) || other.search == search)&&(identical(other.category, category) || other.category == category)&&(identical(other.featured, featured) || other.featured == featured)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.carouselStatus, carouselStatus) || other.carouselStatus == carouselStatus)&&const DeepCollectionEquality().equals(other.carouselActivities, carouselActivities)&&(identical(other.carouselErrorMessage, carouselErrorMessage) || other.carouselErrorMessage == carouselErrorMessage)&&(identical(other.popularStatus, popularStatus) || other.popularStatus == popularStatus)&&const DeepCollectionEquality().equals(other.popularActivities, popularActivities)&&(identical(other.popularPage, popularPage) || other.popularPage == popularPage)&&(identical(other.popularLimit, popularLimit) || other.popularLimit == popularLimit)&&(identical(other.popularHasNextPage, popularHasNextPage) || other.popularHasNextPage == popularHasNextPage)&&(identical(other.search, search) || other.search == search)&&(identical(other.category, category) || other.category == category)&&(identical(other.popularErrorMessage, popularErrorMessage) || other.popularErrorMessage == popularErrorMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(activities),page,limit,hasNextPage,search,category,featured,errorMessage);
+int get hashCode => Object.hash(runtimeType,carouselStatus,const DeepCollectionEquality().hash(carouselActivities),carouselErrorMessage,popularStatus,const DeepCollectionEquality().hash(popularActivities),popularPage,popularLimit,popularHasNextPage,search,category,popularErrorMessage);
 
 @override
 String toString() {
-  return 'HomeState(status: $status, activities: $activities, page: $page, limit: $limit, hasNextPage: $hasNextPage, search: $search, category: $category, featured: $featured, errorMessage: $errorMessage)';
+  return 'HomeState(carouselStatus: $carouselStatus, carouselActivities: $carouselActivities, carouselErrorMessage: $carouselErrorMessage, popularStatus: $popularStatus, popularActivities: $popularActivities, popularPage: $popularPage, popularLimit: $popularLimit, popularHasNextPage: $popularHasNextPage, search: $search, category: $category, popularErrorMessage: $popularErrorMessage)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $HomeStateCopyWith<$Res>  {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) _then) = _$HomeStateCopyWithImpl;
 @useResult
 $Res call({
- HomeActivitiesStatus status, List<ActivitiesResponseData> activities, int page, int limit, bool hasNextPage, String? search, String? category, bool? featured, String? errorMessage
+ HomeCarouselStatus carouselStatus, List<ActivitiesResponseData> carouselActivities, String? carouselErrorMessage, HomeActivitiesStatus popularStatus, List<ActivitiesResponseData> popularActivities, int popularPage, int popularLimit, bool popularHasNextPage, String? search, String? category, String? popularErrorMessage
 });
 
 
@@ -65,17 +65,19 @@ class _$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? activities = null,Object? page = null,Object? limit = null,Object? hasNextPage = null,Object? search = freezed,Object? category = freezed,Object? featured = freezed,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? carouselStatus = null,Object? carouselActivities = null,Object? carouselErrorMessage = freezed,Object? popularStatus = null,Object? popularActivities = null,Object? popularPage = null,Object? popularLimit = null,Object? popularHasNextPage = null,Object? search = freezed,Object? category = freezed,Object? popularErrorMessage = freezed,}) {
   return _then(_self.copyWith(
-status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as HomeActivitiesStatus,activities: null == activities ? _self.activities : activities // ignore: cast_nullable_to_non_nullable
-as List<ActivitiesResponseData>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
-as int,limit: null == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
-as int,hasNextPage: null == hasNextPage ? _self.hasNextPage : hasNextPage // ignore: cast_nullable_to_non_nullable
+carouselStatus: null == carouselStatus ? _self.carouselStatus : carouselStatus // ignore: cast_nullable_to_non_nullable
+as HomeCarouselStatus,carouselActivities: null == carouselActivities ? _self.carouselActivities : carouselActivities // ignore: cast_nullable_to_non_nullable
+as List<ActivitiesResponseData>,carouselErrorMessage: freezed == carouselErrorMessage ? _self.carouselErrorMessage : carouselErrorMessage // ignore: cast_nullable_to_non_nullable
+as String?,popularStatus: null == popularStatus ? _self.popularStatus : popularStatus // ignore: cast_nullable_to_non_nullable
+as HomeActivitiesStatus,popularActivities: null == popularActivities ? _self.popularActivities : popularActivities // ignore: cast_nullable_to_non_nullable
+as List<ActivitiesResponseData>,popularPage: null == popularPage ? _self.popularPage : popularPage // ignore: cast_nullable_to_non_nullable
+as int,popularLimit: null == popularLimit ? _self.popularLimit : popularLimit // ignore: cast_nullable_to_non_nullable
+as int,popularHasNextPage: null == popularHasNextPage ? _self.popularHasNextPage : popularHasNextPage // ignore: cast_nullable_to_non_nullable
 as bool,search: freezed == search ? _self.search : search // ignore: cast_nullable_to_non_nullable
 as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String?,featured: freezed == featured ? _self.featured : featured // ignore: cast_nullable_to_non_nullable
-as bool?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,popularErrorMessage: freezed == popularErrorMessage ? _self.popularErrorMessage : popularErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -161,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HomeActivitiesStatus status,  List<ActivitiesResponseData> activities,  int page,  int limit,  bool hasNextPage,  String? search,  String? category,  bool? featured,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HomeCarouselStatus carouselStatus,  List<ActivitiesResponseData> carouselActivities,  String? carouselErrorMessage,  HomeActivitiesStatus popularStatus,  List<ActivitiesResponseData> popularActivities,  int popularPage,  int popularLimit,  bool popularHasNextPage,  String? search,  String? category,  String? popularErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.status,_that.activities,_that.page,_that.limit,_that.hasNextPage,_that.search,_that.category,_that.featured,_that.errorMessage);case _:
+return $default(_that.carouselStatus,_that.carouselActivities,_that.carouselErrorMessage,_that.popularStatus,_that.popularActivities,_that.popularPage,_that.popularLimit,_that.popularHasNextPage,_that.search,_that.category,_that.popularErrorMessage);case _:
   return orElse();
 
 }
@@ -182,10 +184,10 @@ return $default(_that.status,_that.activities,_that.page,_that.limit,_that.hasNe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HomeActivitiesStatus status,  List<ActivitiesResponseData> activities,  int page,  int limit,  bool hasNextPage,  String? search,  String? category,  bool? featured,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HomeCarouselStatus carouselStatus,  List<ActivitiesResponseData> carouselActivities,  String? carouselErrorMessage,  HomeActivitiesStatus popularStatus,  List<ActivitiesResponseData> popularActivities,  int popularPage,  int popularLimit,  bool popularHasNextPage,  String? search,  String? category,  String? popularErrorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _HomeState():
-return $default(_that.status,_that.activities,_that.page,_that.limit,_that.hasNextPage,_that.search,_that.category,_that.featured,_that.errorMessage);case _:
+return $default(_that.carouselStatus,_that.carouselActivities,_that.carouselErrorMessage,_that.popularStatus,_that.popularActivities,_that.popularPage,_that.popularLimit,_that.popularHasNextPage,_that.search,_that.category,_that.popularErrorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +204,10 @@ return $default(_that.status,_that.activities,_that.page,_that.limit,_that.hasNe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HomeActivitiesStatus status,  List<ActivitiesResponseData> activities,  int page,  int limit,  bool hasNextPage,  String? search,  String? category,  bool? featured,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HomeCarouselStatus carouselStatus,  List<ActivitiesResponseData> carouselActivities,  String? carouselErrorMessage,  HomeActivitiesStatus popularStatus,  List<ActivitiesResponseData> popularActivities,  int popularPage,  int popularLimit,  bool popularHasNextPage,  String? search,  String? category,  String? popularErrorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.status,_that.activities,_that.page,_that.limit,_that.hasNextPage,_that.search,_that.category,_that.featured,_that.errorMessage);case _:
+return $default(_that.carouselStatus,_that.carouselActivities,_that.carouselErrorMessage,_that.popularStatus,_that.popularActivities,_that.popularPage,_that.popularLimit,_that.popularHasNextPage,_that.search,_that.category,_that.popularErrorMessage);case _:
   return null;
 
 }
@@ -217,24 +219,32 @@ return $default(_that.status,_that.activities,_that.page,_that.limit,_that.hasNe
 @JsonSerializable()
 
 class _HomeState extends HomeState {
-   _HomeState({this.status = HomeActivitiesStatus.initial, final  List<ActivitiesResponseData> activities = const <ActivitiesResponseData>[], this.page = 1, this.limit = 10, this.hasNextPage = true, this.search, this.category, this.featured, this.errorMessage}): _activities = activities,super._();
+   _HomeState({this.carouselStatus = HomeCarouselStatus.initial, final  List<ActivitiesResponseData> carouselActivities = const <ActivitiesResponseData>[], this.carouselErrorMessage, this.popularStatus = HomeActivitiesStatus.initial, final  List<ActivitiesResponseData> popularActivities = const <ActivitiesResponseData>[], this.popularPage = 1, this.popularLimit = 10, this.popularHasNextPage = true, this.search, this.category, this.popularErrorMessage}): _carouselActivities = carouselActivities,_popularActivities = popularActivities,super._();
   factory _HomeState.fromJson(Map<String, dynamic> json) => _$HomeStateFromJson(json);
 
-@override@JsonKey() final  HomeActivitiesStatus status;
- final  List<ActivitiesResponseData> _activities;
-@override@JsonKey() List<ActivitiesResponseData> get activities {
-  if (_activities is EqualUnmodifiableListView) return _activities;
+@override@JsonKey() final  HomeCarouselStatus carouselStatus;
+ final  List<ActivitiesResponseData> _carouselActivities;
+@override@JsonKey() List<ActivitiesResponseData> get carouselActivities {
+  if (_carouselActivities is EqualUnmodifiableListView) return _carouselActivities;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_activities);
+  return EqualUnmodifiableListView(_carouselActivities);
 }
 
-@override@JsonKey() final  int page;
-@override@JsonKey() final  int limit;
-@override@JsonKey() final  bool hasNextPage;
+@override final  String? carouselErrorMessage;
+@override@JsonKey() final  HomeActivitiesStatus popularStatus;
+ final  List<ActivitiesResponseData> _popularActivities;
+@override@JsonKey() List<ActivitiesResponseData> get popularActivities {
+  if (_popularActivities is EqualUnmodifiableListView) return _popularActivities;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_popularActivities);
+}
+
+@override@JsonKey() final  int popularPage;
+@override@JsonKey() final  int popularLimit;
+@override@JsonKey() final  bool popularHasNextPage;
 @override final  String? search;
 @override final  String? category;
-@override final  bool? featured;
-@override final  String? errorMessage;
+@override final  String? popularErrorMessage;
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
@@ -249,16 +259,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._activities, _activities)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.search, search) || other.search == search)&&(identical(other.category, category) || other.category == category)&&(identical(other.featured, featured) || other.featured == featured)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.carouselStatus, carouselStatus) || other.carouselStatus == carouselStatus)&&const DeepCollectionEquality().equals(other._carouselActivities, _carouselActivities)&&(identical(other.carouselErrorMessage, carouselErrorMessage) || other.carouselErrorMessage == carouselErrorMessage)&&(identical(other.popularStatus, popularStatus) || other.popularStatus == popularStatus)&&const DeepCollectionEquality().equals(other._popularActivities, _popularActivities)&&(identical(other.popularPage, popularPage) || other.popularPage == popularPage)&&(identical(other.popularLimit, popularLimit) || other.popularLimit == popularLimit)&&(identical(other.popularHasNextPage, popularHasNextPage) || other.popularHasNextPage == popularHasNextPage)&&(identical(other.search, search) || other.search == search)&&(identical(other.category, category) || other.category == category)&&(identical(other.popularErrorMessage, popularErrorMessage) || other.popularErrorMessage == popularErrorMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_activities),page,limit,hasNextPage,search,category,featured,errorMessage);
+int get hashCode => Object.hash(runtimeType,carouselStatus,const DeepCollectionEquality().hash(_carouselActivities),carouselErrorMessage,popularStatus,const DeepCollectionEquality().hash(_popularActivities),popularPage,popularLimit,popularHasNextPage,search,category,popularErrorMessage);
 
 @override
 String toString() {
-  return 'HomeState(status: $status, activities: $activities, page: $page, limit: $limit, hasNextPage: $hasNextPage, search: $search, category: $category, featured: $featured, errorMessage: $errorMessage)';
+  return 'HomeState(carouselStatus: $carouselStatus, carouselActivities: $carouselActivities, carouselErrorMessage: $carouselErrorMessage, popularStatus: $popularStatus, popularActivities: $popularActivities, popularPage: $popularPage, popularLimit: $popularLimit, popularHasNextPage: $popularHasNextPage, search: $search, category: $category, popularErrorMessage: $popularErrorMessage)';
 }
 
 
@@ -269,7 +279,7 @@ abstract mixin class _$HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Re
   factory _$HomeStateCopyWith(_HomeState value, $Res Function(_HomeState) _then) = __$HomeStateCopyWithImpl;
 @override @useResult
 $Res call({
- HomeActivitiesStatus status, List<ActivitiesResponseData> activities, int page, int limit, bool hasNextPage, String? search, String? category, bool? featured, String? errorMessage
+ HomeCarouselStatus carouselStatus, List<ActivitiesResponseData> carouselActivities, String? carouselErrorMessage, HomeActivitiesStatus popularStatus, List<ActivitiesResponseData> popularActivities, int popularPage, int popularLimit, bool popularHasNextPage, String? search, String? category, String? popularErrorMessage
 });
 
 
@@ -286,17 +296,19 @@ class __$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? activities = null,Object? page = null,Object? limit = null,Object? hasNextPage = null,Object? search = freezed,Object? category = freezed,Object? featured = freezed,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? carouselStatus = null,Object? carouselActivities = null,Object? carouselErrorMessage = freezed,Object? popularStatus = null,Object? popularActivities = null,Object? popularPage = null,Object? popularLimit = null,Object? popularHasNextPage = null,Object? search = freezed,Object? category = freezed,Object? popularErrorMessage = freezed,}) {
   return _then(_HomeState(
-status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as HomeActivitiesStatus,activities: null == activities ? _self._activities : activities // ignore: cast_nullable_to_non_nullable
-as List<ActivitiesResponseData>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
-as int,limit: null == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
-as int,hasNextPage: null == hasNextPage ? _self.hasNextPage : hasNextPage // ignore: cast_nullable_to_non_nullable
+carouselStatus: null == carouselStatus ? _self.carouselStatus : carouselStatus // ignore: cast_nullable_to_non_nullable
+as HomeCarouselStatus,carouselActivities: null == carouselActivities ? _self._carouselActivities : carouselActivities // ignore: cast_nullable_to_non_nullable
+as List<ActivitiesResponseData>,carouselErrorMessage: freezed == carouselErrorMessage ? _self.carouselErrorMessage : carouselErrorMessage // ignore: cast_nullable_to_non_nullable
+as String?,popularStatus: null == popularStatus ? _self.popularStatus : popularStatus // ignore: cast_nullable_to_non_nullable
+as HomeActivitiesStatus,popularActivities: null == popularActivities ? _self._popularActivities : popularActivities // ignore: cast_nullable_to_non_nullable
+as List<ActivitiesResponseData>,popularPage: null == popularPage ? _self.popularPage : popularPage // ignore: cast_nullable_to_non_nullable
+as int,popularLimit: null == popularLimit ? _self.popularLimit : popularLimit // ignore: cast_nullable_to_non_nullable
+as int,popularHasNextPage: null == popularHasNextPage ? _self.popularHasNextPage : popularHasNextPage // ignore: cast_nullable_to_non_nullable
 as bool,search: freezed == search ? _self.search : search // ignore: cast_nullable_to_non_nullable
 as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String?,featured: freezed == featured ? _self.featured : featured // ignore: cast_nullable_to_non_nullable
-as bool?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,popularErrorMessage: freezed == popularErrorMessage ? _self.popularErrorMessage : popularErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

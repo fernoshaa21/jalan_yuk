@@ -2,79 +2,117 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../../domain/entities/activities/activities.dart';
 import '../../../domain/usecases/activities/get_activities_usecase.dart';
+import '../../../domain/usecases/activities/get_featured_activities_usecase.dart';
 import 'home_state.dart';
 
 class HomeCubit extends HydratedCubit<HomeState> {
-  HomeCubit(this._getActivitiesUseCase) : super(HomeState());
+  HomeCubit(this._getActivitiesUseCase, this._getFeaturedActivitiesUseCase)
+    : super(HomeState());
 
   final GetActivitiesUseCase _getActivitiesUseCase;
+  final GetFeaturedActivitiesUseCase _getFeaturedActivitiesUseCase;
 
-  Future<void> loadInitialActivities({
+  Future<void> loadInitialHomeData({
     String? search,
     String? category,
-    bool? featured,
-    int limit = 10,
+    int carouselLimit = 6,
+    int popularLimit = 10,
   }) async {
     final normalizedSearch = _normalizeText(search);
-    final normalizedCategory = _normalizeText(category);
+    final normalizedCategory = _normalizeCategory(category);
+
+    emit(
+      state.copyWith(search: normalizedSearch, category: normalizedCategory),
+    );
+
+    await Future.wait([
+      _loadCarouselActivities(limit: _normalizeLimit(carouselLimit)),
+      loadInitialFeaturedActivities(limit: _normalizeLimit(popularLimit)),
+    ]);
+  }
+
+  Future<void> loadInitialFeaturedActivities({
+    String? search,
+    String? category,
+    int limit = 10,
+  }) async {
+    final normalizedSearch = _normalizeText(search) ?? state.search;
+    final normalizedCategory = _normalizeCategory(category) ?? state.category;
 
     emit(
       state.copyWith(
-        status: HomeActivitiesStatus.loading,
-        activities: [],
-        page: 1,
-        limit: limit,
-        hasNextPage: true,
+        popularStatus: HomeActivitiesStatus.loading,
+        popularActivities: [],
+        popularPage: 1,
+        popularLimit: _normalizeLimit(limit),
+        popularHasNextPage: true,
         search: normalizedSearch,
         category: normalizedCategory,
-        featured: featured,
-        errorMessage: null,
+        popularErrorMessage: null,
       ),
     );
 
-    await _fetchActivities(page: 1, append: false);
+    await _fetchFeaturedActivities(page: 1, append: false);
   }
 
-  Future<void> refreshActivities() async {
-    await loadInitialActivities(
+  Future<void> refreshHomeData() async {
+    await loadInitialHomeData(
       search: state.search,
       category: state.category,
-      featured: state.featured,
-      limit: state.limit,
+      carouselLimit: state.carouselActivities.length < 5
+          ? 6
+          : state.carouselActivities.length,
+      popularLimit: state.popularLimit,
     );
   }
 
-  Future<void> loadNextActivities() async {
-    if (state.isFirstPageLoading || state.isLoadingMore || !state.hasNextPage) {
+  Future<void> loadNextFeaturedActivities() async {
+    if (state.isPopularFirstPageLoading ||
+        state.isPopularLoadingMore ||
+        !state.popularHasNextPage) {
       return;
     }
 
-    emit(state.copyWith(status: HomeActivitiesStatus.loadingMore));
+    emit(state.copyWith(popularStatus: HomeActivitiesStatus.loadingMore));
 
-    await _fetchActivities(page: state.page + 1, append: true);
+    await _fetchFeaturedActivities(page: state.popularPage + 1, append: true);
   }
 
-  Future<void> _fetchActivities({
-    required int page,
-    required bool append,
-  }) async {
+  Future<void> _loadCarouselActivities({required int limit}) async {
+    emit(
+      state.copyWith(
+        carouselStatus: HomeCarouselStatus.loading,
+        carouselActivities: const [],
+        carouselErrorMessage: null,
+      ),
+    );
+
     final query = ActivitiesQuery(
       search: state.search,
       category: state.category,
-      featured: state.featured,
-      page: page,
-      limit: state.limit,
+      page: 1,
+      limit: limit,
     );
 
     final result = await _getActivitiesUseCase(query);
 
     result.fold(
       (failure) {
-        if (append && state.activities.isNotEmpty) {
+        emit(
+          state.copyWith(
+            carouselStatus: HomeCarouselStatus.error,
+            carouselErrorMessage: failure.message,
+          ),
+        );
+      },
+      (response) {
+        final items = response.data;
+        if (items.isEmpty) {
           emit(
             state.copyWith(
-              status: HomeActivitiesStatus.success,
-              errorMessage: failure.message,
+              carouselStatus: HomeCarouselStatus.empty,
+              carouselActivities: const [],
+              carouselErrorMessage: null,
             ),
           );
           return;
@@ -82,29 +120,66 @@ class HomeCubit extends HydratedCubit<HomeState> {
 
         emit(
           state.copyWith(
-            status: HomeActivitiesStatus.error,
-            errorMessage: failure.message,
-            hasNextPage: false,
+            carouselStatus: HomeCarouselStatus.success,
+            carouselActivities: items,
+            carouselErrorMessage: null,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _fetchFeaturedActivities({
+    required int page,
+    required bool append,
+  }) async {
+    final query = FeaturedActivitiesQuery(
+      search: state.search,
+      category: FeaturedActivitiesCategoryX.tryParse(state.category),
+      page: page,
+      limit: state.popularLimit,
+    );
+
+    final result = await _getFeaturedActivitiesUseCase(query);
+
+    result.fold(
+      (failure) {
+        if (append && state.popularActivities.isNotEmpty) {
+          emit(
+            state.copyWith(
+              popularStatus: HomeActivitiesStatus.success,
+              popularErrorMessage: failure.message,
+            ),
+          );
+          return;
+        }
+
+        emit(
+          state.copyWith(
+            popularStatus: HomeActivitiesStatus.error,
+            popularErrorMessage: failure.message,
+            popularHasNextPage: false,
           ),
         );
       },
       (response) {
         final incoming = response.data;
         final merged = append
-            ? <ActivitiesResponseData>[...state.activities, ...incoming]
+            ? <ActivitiesResponseData>[...state.popularActivities, ...incoming]
             : incoming;
 
         final hasNextPage =
-            response.meta?.hasNextPage ?? (incoming.length >= state.limit);
+            response.meta?.hasNextPage ??
+            (incoming.length >= state.popularLimit);
 
         if (merged.isEmpty) {
           emit(
             state.copyWith(
-              status: HomeActivitiesStatus.empty,
-              activities: const [],
-              page: page,
-              hasNextPage: false,
-              errorMessage: null,
+              popularStatus: HomeActivitiesStatus.empty,
+              popularActivities: const [],
+              popularPage: page,
+              popularHasNextPage: false,
+              popularErrorMessage: null,
             ),
           );
           return;
@@ -112,11 +187,11 @@ class HomeCubit extends HydratedCubit<HomeState> {
 
         emit(
           state.copyWith(
-            status: HomeActivitiesStatus.success,
-            activities: merged,
-            page: page,
-            hasNextPage: hasNextPage,
-            errorMessage: null,
+            popularStatus: HomeActivitiesStatus.success,
+            popularActivities: merged,
+            popularPage: page,
+            popularHasNextPage: hasNextPage,
+            popularErrorMessage: null,
           ),
         );
       },
@@ -129,6 +204,21 @@ class HomeCubit extends HydratedCubit<HomeState> {
       return null;
     }
     return text;
+  }
+
+  String? _normalizeCategory(String? value) {
+    final normalized = _normalizeText(value);
+    return FeaturedActivitiesCategoryX.tryParse(normalized)?.value;
+  }
+
+  int _normalizeLimit(int value) {
+    if (value < 1) {
+      return 1;
+    }
+    if (value > 100) {
+      return 100;
+    }
+    return value;
   }
 
   @override

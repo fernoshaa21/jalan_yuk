@@ -72,6 +72,10 @@ Map<String, dynamic> _$ActivitiesResponseDataToJson(
 };
 
 const _$CategoryEnumMap = {
+  Category.adventure: 'adventure',
+  Category.nature: 'nature',
+  Category.culinary: 'culinary',
+  Category.waterSport: 'water-sport',
   Category.cityTour: 'city-tour',
   Category.culture: 'culture',
   Category.family: 'family',

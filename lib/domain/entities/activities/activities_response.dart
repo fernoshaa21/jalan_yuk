@@ -50,6 +50,14 @@ abstract class ActivitiesResponseData with _$ActivitiesResponseData {
 }
 
 enum Category {
+  @JsonValue("adventure")
+  adventure,
+  @JsonValue("nature")
+  nature,
+  @JsonValue("culinary")
+  culinary,
+  @JsonValue("water-sport")
+  waterSport,
   @JsonValue("city-tour")
   cityTour,
   @JsonValue("culture")

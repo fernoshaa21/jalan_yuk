@@ -7,37 +7,63 @@ part of 'home_state.dart';
 // **************************************************************************
 
 _HomeState _$HomeStateFromJson(Map<String, dynamic> json) => _HomeState(
-  status:
-      $enumDecodeNullable(_$HomeActivitiesStatusEnumMap, json['status']) ??
-      HomeActivitiesStatus.initial,
-  activities:
-      (json['activities'] as List<dynamic>?)
+  carouselStatus:
+      $enumDecodeNullable(
+        _$HomeCarouselStatusEnumMap,
+        json['carouselStatus'],
+      ) ??
+      HomeCarouselStatus.initial,
+  carouselActivities:
+      (json['carouselActivities'] as List<dynamic>?)
           ?.map(
             (e) => ActivitiesResponseData.fromJson(e as Map<String, dynamic>),
           )
           .toList() ??
       const <ActivitiesResponseData>[],
-  page: (json['page'] as num?)?.toInt() ?? 1,
-  limit: (json['limit'] as num?)?.toInt() ?? 10,
-  hasNextPage: json['hasNextPage'] as bool? ?? true,
+  carouselErrorMessage: json['carouselErrorMessage'] as String?,
+  popularStatus:
+      $enumDecodeNullable(
+        _$HomeActivitiesStatusEnumMap,
+        json['popularStatus'],
+      ) ??
+      HomeActivitiesStatus.initial,
+  popularActivities:
+      (json['popularActivities'] as List<dynamic>?)
+          ?.map(
+            (e) => ActivitiesResponseData.fromJson(e as Map<String, dynamic>),
+          )
+          .toList() ??
+      const <ActivitiesResponseData>[],
+  popularPage: (json['popularPage'] as num?)?.toInt() ?? 1,
+  popularLimit: (json['popularLimit'] as num?)?.toInt() ?? 10,
+  popularHasNextPage: json['popularHasNextPage'] as bool? ?? true,
   search: json['search'] as String?,
   category: json['category'] as String?,
-  featured: json['featured'] as bool?,
-  errorMessage: json['errorMessage'] as String?,
+  popularErrorMessage: json['popularErrorMessage'] as String?,
 );
 
 Map<String, dynamic> _$HomeStateToJson(_HomeState instance) =>
     <String, dynamic>{
-      'status': _$HomeActivitiesStatusEnumMap[instance.status]!,
-      'activities': instance.activities,
-      'page': instance.page,
-      'limit': instance.limit,
-      'hasNextPage': instance.hasNextPage,
+      'carouselStatus': _$HomeCarouselStatusEnumMap[instance.carouselStatus]!,
+      'carouselActivities': instance.carouselActivities,
+      'carouselErrorMessage': instance.carouselErrorMessage,
+      'popularStatus': _$HomeActivitiesStatusEnumMap[instance.popularStatus]!,
+      'popularActivities': instance.popularActivities,
+      'popularPage': instance.popularPage,
+      'popularLimit': instance.popularLimit,
+      'popularHasNextPage': instance.popularHasNextPage,
       'search': instance.search,
       'category': instance.category,
-      'featured': instance.featured,
-      'errorMessage': instance.errorMessage,
+      'popularErrorMessage': instance.popularErrorMessage,
     };
+
+const _$HomeCarouselStatusEnumMap = {
+  HomeCarouselStatus.initial: 'initial',
+  HomeCarouselStatus.loading: 'loading',
+  HomeCarouselStatus.success: 'success',
+  HomeCarouselStatus.empty: 'empty',
+  HomeCarouselStatus.error: 'error',
+};
 
 const _$HomeActivitiesStatusEnumMap = {
   HomeActivitiesStatus.initial: 'initial',
