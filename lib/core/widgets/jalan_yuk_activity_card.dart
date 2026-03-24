@@ -8,6 +8,7 @@ class JalanYukActivityCard extends StatelessWidget {
   const JalanYukActivityCard({
     super.key,
     required this.imagePath,
+    this.isNetworkImage = false,
     required this.title,
     required this.priceLabel,
     this.ratingLabel = '4.8',
@@ -18,6 +19,7 @@ class JalanYukActivityCard extends StatelessWidget {
   });
 
   final String imagePath;
+  final bool isNetworkImage;
   final String title;
   final String priceLabel;
   final String ratingLabel;
@@ -48,6 +50,7 @@ class JalanYukActivityCard extends StatelessWidget {
           children: [
             JalanYukImageBanner(
               image: imagePath,
+              isNetwork: isNetworkImage,
               borderRadius: 18,
               height: 150,
             ),

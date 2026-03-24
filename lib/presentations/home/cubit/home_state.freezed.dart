@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeState {
 
- String? get username; String? get time; String? get location; String? get status; String? get selfiePath;
+ HomeActivitiesStatus get status; List<ActivitiesResponseData> get activities; int get page; int get limit; bool get hasNextPage; String? get search; String? get category; bool? get featured; String? get errorMessage;
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $HomeStateCopyWith<HomeState> get copyWith => _$HomeStateCopyWithImpl<HomeState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.username, username) || other.username == username)&&(identical(other.time, time) || other.time == time)&&(identical(other.location, location) || other.location == location)&&(identical(other.status, status) || other.status == status)&&(identical(other.selfiePath, selfiePath) || other.selfiePath == selfiePath));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.activities, activities)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.search, search) || other.search == search)&&(identical(other.category, category) || other.category == category)&&(identical(other.featured, featured) || other.featured == featured)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,username,time,location,status,selfiePath);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(activities),page,limit,hasNextPage,search,category,featured,errorMessage);
 
 @override
 String toString() {
-  return 'HomeState(username: $username, time: $time, location: $location, status: $status, selfiePath: $selfiePath)';
+  return 'HomeState(status: $status, activities: $activities, page: $page, limit: $limit, hasNextPage: $hasNextPage, search: $search, category: $category, featured: $featured, errorMessage: $errorMessage)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $HomeStateCopyWith<$Res>  {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) _then) = _$HomeStateCopyWithImpl;
 @useResult
 $Res call({
- String? username, String? time, String? location, String? status, String? selfiePath
+ HomeActivitiesStatus status, List<ActivitiesResponseData> activities, int page, int limit, bool hasNextPage, String? search, String? category, bool? featured, String? errorMessage
 });
 
 
@@ -65,13 +65,17 @@ class _$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? username = freezed,Object? time = freezed,Object? location = freezed,Object? status = freezed,Object? selfiePath = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? activities = null,Object? page = null,Object? limit = null,Object? hasNextPage = null,Object? search = freezed,Object? category = freezed,Object? featured = freezed,Object? errorMessage = freezed,}) {
   return _then(_self.copyWith(
-username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
-as String?,time: freezed == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
-as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String?,selfiePath: freezed == selfiePath ? _self.selfiePath : selfiePath // ignore: cast_nullable_to_non_nullable
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as HomeActivitiesStatus,activities: null == activities ? _self.activities : activities // ignore: cast_nullable_to_non_nullable
+as List<ActivitiesResponseData>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,limit: null == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
+as int,hasNextPage: null == hasNextPage ? _self.hasNextPage : hasNextPage // ignore: cast_nullable_to_non_nullable
+as bool,search: freezed == search ? _self.search : search // ignore: cast_nullable_to_non_nullable
+as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,featured: freezed == featured ? _self.featured : featured // ignore: cast_nullable_to_non_nullable
+as bool?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -157,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? username,  String? time,  String? location,  String? status,  String? selfiePath)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HomeActivitiesStatus status,  List<ActivitiesResponseData> activities,  int page,  int limit,  bool hasNextPage,  String? search,  String? category,  bool? featured,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.username,_that.time,_that.location,_that.status,_that.selfiePath);case _:
+return $default(_that.status,_that.activities,_that.page,_that.limit,_that.hasNextPage,_that.search,_that.category,_that.featured,_that.errorMessage);case _:
   return orElse();
 
 }
@@ -178,10 +182,10 @@ return $default(_that.username,_that.time,_that.location,_that.status,_that.self
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? username,  String? time,  String? location,  String? status,  String? selfiePath)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HomeActivitiesStatus status,  List<ActivitiesResponseData> activities,  int page,  int limit,  bool hasNextPage,  String? search,  String? category,  bool? featured,  String? errorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _HomeState():
-return $default(_that.username,_that.time,_that.location,_that.status,_that.selfiePath);case _:
+return $default(_that.status,_that.activities,_that.page,_that.limit,_that.hasNextPage,_that.search,_that.category,_that.featured,_that.errorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +202,10 @@ return $default(_that.username,_that.time,_that.location,_that.status,_that.self
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? username,  String? time,  String? location,  String? status,  String? selfiePath)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HomeActivitiesStatus status,  List<ActivitiesResponseData> activities,  int page,  int limit,  bool hasNextPage,  String? search,  String? category,  bool? featured,  String? errorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.username,_that.time,_that.location,_that.status,_that.selfiePath);case _:
+return $default(_that.status,_that.activities,_that.page,_that.limit,_that.hasNextPage,_that.search,_that.category,_that.featured,_that.errorMessage);case _:
   return null;
 
 }
@@ -213,14 +217,24 @@ return $default(_that.username,_that.time,_that.location,_that.status,_that.self
 @JsonSerializable()
 
 class _HomeState extends HomeState {
-   _HomeState({this.username, this.time, this.location, this.status, this.selfiePath}): super._();
+   _HomeState({this.status = HomeActivitiesStatus.initial, final  List<ActivitiesResponseData> activities = const <ActivitiesResponseData>[], this.page = 1, this.limit = 10, this.hasNextPage = true, this.search, this.category, this.featured, this.errorMessage}): _activities = activities,super._();
   factory _HomeState.fromJson(Map<String, dynamic> json) => _$HomeStateFromJson(json);
 
-@override final  String? username;
-@override final  String? time;
-@override final  String? location;
-@override final  String? status;
-@override final  String? selfiePath;
+@override@JsonKey() final  HomeActivitiesStatus status;
+ final  List<ActivitiesResponseData> _activities;
+@override@JsonKey() List<ActivitiesResponseData> get activities {
+  if (_activities is EqualUnmodifiableListView) return _activities;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_activities);
+}
+
+@override@JsonKey() final  int page;
+@override@JsonKey() final  int limit;
+@override@JsonKey() final  bool hasNextPage;
+@override final  String? search;
+@override final  String? category;
+@override final  bool? featured;
+@override final  String? errorMessage;
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
@@ -235,16 +249,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.username, username) || other.username == username)&&(identical(other.time, time) || other.time == time)&&(identical(other.location, location) || other.location == location)&&(identical(other.status, status) || other.status == status)&&(identical(other.selfiePath, selfiePath) || other.selfiePath == selfiePath));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._activities, _activities)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.search, search) || other.search == search)&&(identical(other.category, category) || other.category == category)&&(identical(other.featured, featured) || other.featured == featured)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,username,time,location,status,selfiePath);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_activities),page,limit,hasNextPage,search,category,featured,errorMessage);
 
 @override
 String toString() {
-  return 'HomeState(username: $username, time: $time, location: $location, status: $status, selfiePath: $selfiePath)';
+  return 'HomeState(status: $status, activities: $activities, page: $page, limit: $limit, hasNextPage: $hasNextPage, search: $search, category: $category, featured: $featured, errorMessage: $errorMessage)';
 }
 
 
@@ -255,7 +269,7 @@ abstract mixin class _$HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Re
   factory _$HomeStateCopyWith(_HomeState value, $Res Function(_HomeState) _then) = __$HomeStateCopyWithImpl;
 @override @useResult
 $Res call({
- String? username, String? time, String? location, String? status, String? selfiePath
+ HomeActivitiesStatus status, List<ActivitiesResponseData> activities, int page, int limit, bool hasNextPage, String? search, String? category, bool? featured, String? errorMessage
 });
 
 
@@ -272,13 +286,17 @@ class __$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? username = freezed,Object? time = freezed,Object? location = freezed,Object? status = freezed,Object? selfiePath = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? activities = null,Object? page = null,Object? limit = null,Object? hasNextPage = null,Object? search = freezed,Object? category = freezed,Object? featured = freezed,Object? errorMessage = freezed,}) {
   return _then(_HomeState(
-username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
-as String?,time: freezed == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
-as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String?,selfiePath: freezed == selfiePath ? _self.selfiePath : selfiePath // ignore: cast_nullable_to_non_nullable
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as HomeActivitiesStatus,activities: null == activities ? _self._activities : activities // ignore: cast_nullable_to_non_nullable
+as List<ActivitiesResponseData>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,limit: null == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
+as int,hasNextPage: null == hasNextPage ? _self.hasNextPage : hasNextPage // ignore: cast_nullable_to_non_nullable
+as bool,search: freezed == search ? _self.search : search // ignore: cast_nullable_to_non_nullable
+as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,featured: freezed == featured ? _self.featured : featured // ignore: cast_nullable_to_non_nullable
+as bool?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -33,23 +33,30 @@ Future<void> setupInjection() async {
 
 void _datasources() {
   di.registerSingleton<AuthApi>(AuthApiImpl(di()));
+  di.registerSingleton<ActivitiesApi>(ActivitiesApiImpl(di()));
 }
 
 void _repositories() {
   // _repositories
   di.registerSingleton<AuthRepository>(AuthRepositoryImpl(di(), di()));
+  di.registerSingleton<ActivitiesRepository>(
+    ActivitiesRepositoryImpl(di(), di()),
+  );
 }
 
 void _useCases() {
   /// auth
   di.registerSingleton<LoginUseCase>(LoginUseCase(di()));
   di.registerSingleton<RegisterUsecase>(RegisterUsecase(di()));
+
+  /// activities
+  di.registerSingleton<GetActivitiesUseCase>(GetActivitiesUseCase(di()));
 }
 
 void _cubits() {
   //Cubits use MultiBlocProvider (RegisterSingleton Injections)
   di.registerLazySingleton(() => AuthCubit(di(), di()));
-  di.registerLazySingleton(() => HomeCubit());
+  di.registerLazySingleton(() => HomeCubit(di()));
 }
 
 void _utils() {

@@ -1,129 +1,143 @@
-// HomeCubit.dart
-
-import 'dart:io';
-
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jalan_yuk/presentations/home/cubit/home_state.dart';
+
+import '../../../domain/entities/activities/activities.dart';
+import '../../../domain/usecases/activities/get_activities_usecase.dart';
+import 'home_state.dart';
 
 class HomeCubit extends HydratedCubit<HomeState> {
-  HomeCubit() : super(HomeState());
+  HomeCubit(this._getActivitiesUseCase) : super(HomeState());
 
-  // Dummy location (nanti bisa di sesuaikan dengan lokasi perusahaan dan ini yang saya pakai adalah lokasi rumah saya)
-  static const _dummyLocation = LatLng(-6.357787, 106.561748);
+  final GetActivitiesUseCase _getActivitiesUseCase;
 
-  Future<void> getLocationAndSelfie() async {
-    //Permission
-    final permission = await _checkLocationPermission();
-
-    if (permission != LocationPermission.whileInUse &&
-        permission != LocationPermission.always) {
-      emit(state.copyWith(status: "Permission Denied"));
-      return;
-    }
-
-    // getCurrentLocation
-    Position position = await _getCurrentLocation();
-
-    final selfie = await _takeSelfie();
-
-    // Validation Radius 100M
-    bool isInRadius = _isWithinRadius(position, _dummyLocation);
-
-    String selfiePath = selfie.path;
-
-    final prefs = await SharedPreferences.getInstance();
-    final isAbsen = prefs.getBool('isAbsen') ?? false;
-
-    if (isAbsen) {
-      emit(
-        state.copyWith(
-          username: "John Doe",
-          time: DateTime.now().toString(),
-          location: position.toString(),
-          status: "Sudah Absen",
-          selfiePath: selfiePath,
-        ),
-      );
-    } else {
-      emit(
-        state.copyWith(
-          username: "John Doe",
-          time: DateTime.now().toString(),
-          location: position.toString(),
-          status: isInRadius ? "Absen Sekarang" : "Terlalu Jauh",
-          selfiePath: selfiePath,
-        ),
-      );
-    }
-  }
-
-  Future<void> removeSelfie() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.remove('selfiePath');
-    await prefs.remove('time');
-    await prefs.remove('location');
-    await prefs.remove('status');
+  Future<void> loadInitialActivities({
+    String? search,
+    String? category,
+    bool? featured,
+    int limit = 10,
+  }) async {
+    final normalizedSearch = _normalizeText(search);
+    final normalizedCategory = _normalizeText(category);
 
     emit(
       state.copyWith(
-        selfiePath: null,
-        time: null,
-        location: null,
-        status: null,
+        status: HomeActivitiesStatus.loading,
+        activities: [],
+        page: 1,
+        limit: limit,
+        hasNextPage: true,
+        search: normalizedSearch,
+        category: normalizedCategory,
+        featured: featured,
+        errorMessage: null,
       ),
     );
+
+    await _fetchActivities(page: 1, append: false);
   }
 
-  Future<LocationPermission> _checkLocationPermission() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    return permission;
-  }
-
-  // Mendapatkan posisi lokasi pengguna
-  Future<Position> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      throw Exception("Location services are disabled.");
-    }
-
-    return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
+  Future<void> refreshActivities() async {
+    await loadInitialActivities(
+      search: state.search,
+      category: state.category,
+      featured: state.featured,
+      limit: state.limit,
     );
   }
 
-  bool _isWithinRadius(Position position, LatLng target) {
-    final distance = Geolocator.distanceBetween(
-      position.latitude,
-      position.longitude,
-      target.latitude,
-      target.longitude,
-    );
-    return distance <= 100;
+  Future<void> loadNextActivities() async {
+    if (state.isFirstPageLoading || state.isLoadingMore || !state.hasNextPage) {
+      return;
+    }
+
+    emit(state.copyWith(status: HomeActivitiesStatus.loadingMore));
+
+    await _fetchActivities(page: state.page + 1, append: true);
   }
 
-  Future<File> _takeSelfie() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      return File(pickedFile.path);
-    } else {
-      throw Exception("Selfie not taken");
+  Future<void> _fetchActivities({
+    required int page,
+    required bool append,
+  }) async {
+    final query = ActivitiesQuery(
+      search: state.search,
+      category: state.category,
+      featured: state.featured,
+      page: page,
+      limit: state.limit,
+    );
+
+    final result = await _getActivitiesUseCase(query);
+
+    result.fold(
+      (failure) {
+        if (append && state.activities.isNotEmpty) {
+          emit(
+            state.copyWith(
+              status: HomeActivitiesStatus.success,
+              errorMessage: failure.message,
+            ),
+          );
+          return;
+        }
+
+        emit(
+          state.copyWith(
+            status: HomeActivitiesStatus.error,
+            errorMessage: failure.message,
+            hasNextPage: false,
+          ),
+        );
+      },
+      (response) {
+        final incoming = response.data;
+        final merged = append
+            ? <ActivitiesResponseData>[...state.activities, ...incoming]
+            : incoming;
+
+        final hasNextPage =
+            response.meta?.hasNextPage ?? (incoming.length >= state.limit);
+
+        if (merged.isEmpty) {
+          emit(
+            state.copyWith(
+              status: HomeActivitiesStatus.empty,
+              activities: const [],
+              page: page,
+              hasNextPage: false,
+              errorMessage: null,
+            ),
+          );
+          return;
+        }
+
+        emit(
+          state.copyWith(
+            status: HomeActivitiesStatus.success,
+            activities: merged,
+            page: page,
+            hasNextPage: hasNextPage,
+            errorMessage: null,
+          ),
+        );
+      },
+    );
+  }
+
+  String? _normalizeText(String? value) {
+    final text = value?.trim();
+    if (text == null || text.isEmpty) {
+      return null;
     }
+    return text;
   }
 
   @override
   HomeState? fromJson(Map<String, dynamic> json) {
-    return HomeState.fromJson(json);
+    try {
+      return HomeState.fromJson(json);
+    } catch (_) {
+      return HomeState();
+    }
   }
 
   @override

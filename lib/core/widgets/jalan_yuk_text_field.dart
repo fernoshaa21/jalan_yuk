@@ -17,6 +17,8 @@ class JalanYukTextField extends StatelessWidget {
     this.onChanged,
     this.maxLines = 1,
     this.textInputAction,
+    this.borderRadius = 12,
+    this.contentPadding,
   });
 
   final TextEditingController controller;
@@ -31,6 +33,8 @@ class JalanYukTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final int maxLines;
   final TextInputAction? textInputAction;
+  final double borderRadius;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -63,20 +67,19 @@ class JalanYukTextField extends StatelessWidget {
             suffixIcon: suffixIcon,
             filled: true,
             fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 14,
-            ),
+            contentPadding:
+                contentPadding ??
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(borderRadius),
               borderSide: const BorderSide(color: JalanYukColors.border),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(borderRadius),
               borderSide: const BorderSide(color: JalanYukColors.border),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(borderRadius),
               borderSide: const BorderSide(
                 color: JalanYukColors.emerald,
                 width: 1.3,
