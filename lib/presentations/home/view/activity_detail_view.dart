@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jalan_yuk/core/core.dart';
 
+import '../../../domain/entities/activities/activities.dart';
+import '../cubit/detail_activities_cubit.dart';
+import '../cubit/detail_activities_state.dart';
+
 class ActivityDetailView extends StatefulWidget {
-  const ActivityDetailView({super.key});
+  const ActivityDetailView({super.key, required this.activityId});
+
+  final String activityId;
 
   @override
   State<ActivityDetailView> createState() => _ActivityDetailViewState();
@@ -11,57 +18,108 @@ class ActivityDetailView extends StatefulWidget {
 
 class _ActivityDetailViewState extends State<ActivityDetailView> {
   int _quantity = 1;
-  static const int _unitPrice = 375000;
 
-  int get _totalPrice => _unitPrice * _quantity;
+  int get _totalPrice {
+    final unitPrice = _parsePriceToInt(
+      context.read<DetailActivitiesCubit>().state.activity?.price,
+    );
+    return unitPrice * _quantity;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    final cubit = context.read<DetailActivitiesCubit>();
+    if (cubit.state.isInitial) {
+      cubit.loadDetailActivities(widget.activityId);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const JalanYukAppBar(title: 'Activity Detail'),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeroImage(),
-                const SizedBox(height: 18),
-                _buildTitleSection(),
-                const SizedBox(height: 14),
-                _buildBenefitChips(),
-                const SizedBox(height: 22),
-                _buildDescriptionSection(),
-                const SizedBox(height: 22),
-                _buildPriceAndStepper(),
-                const SizedBox(height: 24),
-                _buildBookButton(context),
-              ],
-            ),
-          ),
+    return BlocBuilder<DetailActivitiesCubit, DetailActivitiesState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: const JalanYukAppBar(title: 'Activity Detail'),
+          body: SafeArea(top: false, child: _buildBody(state)),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(DetailActivitiesState state) {
+    if (state.isLoading) {
+      return const JalanYukStateView(type: JalanYukStateType.loading);
+    }
+
+    if (state.isError) {
+      return JalanYukStateView(
+        type: JalanYukStateType.error,
+        title: 'Failed to load activity detail',
+        message: state.errorMessage,
+        onRetry: () => context
+            .read<DetailActivitiesCubit>()
+            .loadDetailActivities(widget.activityId),
+      );
+    }
+
+    if (state.isEmpty || state.activity == null) {
+      return JalanYukStateView(
+        type: JalanYukStateType.empty,
+        title: 'Activity not found',
+        message: 'The activity detail is not available right now.',
+        onRetry: () => context
+            .read<DetailActivitiesCubit>()
+            .loadDetailActivities(widget.activityId),
+      );
+    }
+
+    final activity = state.activity!;
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeroImage(activity),
+            const SizedBox(height: 18),
+            _buildTitleSection(activity),
+            const SizedBox(height: 14),
+            _buildBenefitChips(activity),
+            const SizedBox(height: 22),
+            _buildDescriptionSection(activity),
+            const SizedBox(height: 22),
+            _buildPriceAndStepper(activity),
+            const SizedBox(height: 24),
+            _buildBookButton(context),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildHeroImage() {
-    return const JalanYukImageBanner(
-      image: 'assets/images/rentara_map.png',
+  Widget _buildHeroImage(DetailActivitiesData activity) {
+    final image = activity.imageUrl;
+    final hasNetworkImage = image != null && image.trim().isNotEmpty;
+
+    return JalanYukImageBanner(
+      image: hasNetworkImage ? image : 'assets/images/rentara_map.png',
+      isNetwork: hasNetworkImage,
       borderRadius: 16,
       aspectRatio: 16 / 9,
     );
   }
 
-  Widget _buildTitleSection() {
+  Widget _buildTitleSection(DetailActivitiesData activity) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'White Water Rafting',
-          style: TextStyle(
+        Text(
+          activity.title ?? '-',
+          style: const TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.w800,
             color: Color(0xFF111827),
@@ -70,29 +128,29 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
         ),
         const SizedBox(height: 10),
         Row(
-          children: const [
-            Icon(
+          children: [
+            const Icon(
               Icons.location_on_outlined,
               size: 18,
               color: Color(0xFF6B7280),
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Text(
-              'Ubud, Bali',
-              style: TextStyle(
+              activity.location ?? '-',
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF6B7280),
               ),
             ),
-            SizedBox(width: 10),
-            _GreenDot(),
-            SizedBox(width: 10),
-            Icon(Icons.star_rounded, size: 18, color: Color(0xFFFACC15)),
-            SizedBox(width: 4),
+            const SizedBox(width: 10),
+            const _GreenDot(),
+            const SizedBox(width: 10),
+            const Icon(Icons.star_rounded, size: 18, color: Color(0xFFFACC15)),
+            const SizedBox(width: 4),
             Text(
-              '4.8',
-              style: TextStyle(
+              activity.rating ?? '-',
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF374151),
@@ -104,8 +162,18 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
     );
   }
 
-  Widget _buildBenefitChips() {
-    const chips = ['Hotel Pickup', 'Free Drink', 'Guide'];
+  Widget _buildBenefitChips(DetailActivitiesData activity) {
+    final chips = <String>[
+      if ((activity.category ?? '').trim().isNotEmpty)
+        (activity.category ?? '').trim(),
+      if (activity.availableSlots != null) 'Slots ${activity.availableSlots}',
+      if (activity.currentParticipants != null)
+        'Participants ${activity.currentParticipants}',
+    ];
+
+    if (chips.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Wrap(
       spacing: 10,
@@ -118,18 +186,15 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
     );
   }
 
-  Widget _buildDescriptionSection() {
-    return const Column(
+  Widget _buildDescriptionSection(DetailActivitiesData activity) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        JalanYukSectionTitle(title: 'About the Tour'),
-        SizedBox(height: 8),
+        const JalanYukSectionTitle(title: 'About the Tour'),
+        const SizedBox(height: 8),
         Text(
-          'Experience the thrill of Bali\'s most scenic river with expert guides '
-          'and complete safety equipment. This package includes hotel pickup, '
-          'refreshing drinks, and a fun route perfect for beginners and adventure '
-          'seekers alike.',
-          style: TextStyle(
+          activity.description ?? '-',
+          style: const TextStyle(
             fontSize: 15,
             height: 1.6,
             color: Color(0xFF4B5563),
@@ -140,7 +205,7 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
     );
   }
 
-  Widget _buildPriceAndStepper() {
+  Widget _buildPriceAndStepper(DetailActivitiesData activity) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
@@ -176,7 +241,12 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
           ),
           JalanYukQuantityStepper(
             value: _quantity,
-            onDecrement: () => setState(() => _quantity--),
+            onDecrement: () {
+              if (_quantity <= 1) {
+                return;
+              }
+              setState(() => _quantity--);
+            },
             onIncrement: () => setState(() => _quantity++),
           ),
         ],
@@ -200,6 +270,15 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
   String _formatRupiah(int value) {
     final ribuan = value ~/ 1000;
     return 'Rp ${ribuan}k';
+  }
+
+  int _parsePriceToInt(String? raw) {
+    if (raw == null || raw.trim().isEmpty) {
+      return 0;
+    }
+
+    final numeric = raw.replaceAll(RegExp(r'[^0-9]'), '');
+    return int.tryParse(numeric) ?? 0;
   }
 }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jalan_yuk/lib.dart';
+import 'package:jalan_yuk/presentations/home/cubit/detail_activities_cubit.dart';
 
 final dashboardNavigatorKey = GlobalKey<NavigatorState>();
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -89,9 +91,15 @@ final router = GoRouter(
       builder: (context, state) => const ExplorePropertyView(),
     ),
     GoRoute(
-      path: '/activity_detail',
+      path: '/activity_detail/:id',
       name: 'activity_detail',
-      builder: (context, state) => const ActivityDetailView(),
+      builder: (context, state) {
+        final id = state.pathParameters['id'] ?? '';
+        return BlocProvider<DetailActivitiesCubit>(
+          create: (_) => di<DetailActivitiesCubit>()..loadDetailActivities(id),
+          child: ActivityDetailView(activityId: id),
+        );
+      },
     ),
     GoRoute(
       path: '/booking_detail',

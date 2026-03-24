@@ -320,8 +320,8 @@ class _HomeViewState extends State<HomeView> {
                 compact: true,
                 showBookButton: true,
                 imageHeight: imageHeight.toDouble(),
-                onTap: () => context.pushNamed('activity_detail'),
-                onBookTap: () => context.pushNamed('activity_detail'),
+                onTap: () => _openActivityDetail(item.id),
+                onBookTap: () => _openActivityDetail(item.id),
               ),
             );
           },
@@ -410,41 +410,44 @@ class _HomeViewState extends State<HomeView> {
                       final item = items[index];
                       return Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 12,
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.local_fire_department_rounded,
-                                  color: Color(0xFFF59E0B),
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    item.title ?? '-',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                          InkWell(
+                            onTap: () => _openActivityDetail(item.id),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.local_fire_department_rounded,
+                                    color: Color(0xFFF59E0B),
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      item.title ?? '-',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Color(0xFF111827),
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    _formatPrice(item.price),
                                     style: const TextStyle(
                                       color: Color(0xFF111827),
                                       fontSize: 17,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  _formatPrice(item.price),
-                                  style: const TextStyle(
-                                    color: Color(0xFF111827),
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           if (index != items.length - 1)
@@ -476,6 +479,14 @@ class _HomeViewState extends State<HomeView> {
 
   bool _isNetworkUrl(String value) {
     return value.startsWith('http://') || value.startsWith('https://');
+  }
+
+  void _openActivityDetail(int? id) {
+    if (id == null) {
+      return;
+    }
+
+    context.pushNamed('activity_detail', pathParameters: {'id': '$id'});
   }
 
   String _formatPrice(String? raw) {

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:jalan_yuk/domain/entities/activities/detail_activities.dart';
 
 import '../../../domain/entities/activities/activities.dart';
 
@@ -7,6 +8,7 @@ abstract class ActivitiesApi {
   Future<ActivitiesResponse> getFeaturedActivities(
     FeaturedActivitiesQuery query,
   );
+  Future<DetailActivities> detailActivities(String id);
 }
 
 class ActivitiesApiImpl implements ActivitiesApi {
@@ -27,6 +29,18 @@ class ActivitiesApiImpl implements ActivitiesApi {
     }
 
     return ActivitiesResponse.fromJson(raw);
+  }
+
+  @override
+  Future<DetailActivities> detailActivities(String id) async {
+    final response = await _dio.get('/activities/$id');
+
+    final raw = response.data;
+    if (raw is! Map<String, dynamic>) {
+      throw Exception('Invalid /activities response format');
+    }
+
+    return DetailActivities.fromJson(raw);
   }
 
   @override

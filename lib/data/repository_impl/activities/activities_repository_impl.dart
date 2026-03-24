@@ -44,4 +44,21 @@ class ActivitiesRepositoryImpl implements ActivitiesRepository {
       return Left(Failure.parseFromException(e));
     }
   }
+
+  @override
+  Future<Either<Failure, DetailActivities>> getDetailActivities(
+    String id,
+  ) async {
+    final isConnected = await _networkInfo.isConnected;
+    if (!isConnected) {
+      return Left(Failure.noConnection());
+    }
+
+    try {
+      final result = await _api.detailActivities(id);
+      return Right(result);
+    } catch (e) {
+      return Left(Failure.parseFromException(e));
+    }
+  }
 }

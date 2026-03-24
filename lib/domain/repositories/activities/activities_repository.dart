@@ -11,4 +11,6 @@ abstract class ActivitiesRepository {
   Future<Either<Failure, ActivitiesResponse>> getFeaturedActivities(
     FeaturedActivitiesQuery query,
   );
+
+  Future<Either<Failure, DetailActivities>> getDetailActivities(String id);
 }
