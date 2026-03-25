@@ -223,11 +223,7 @@ class HomeCubit extends HydratedCubit<HomeState> {
 
   @override
   HomeState? fromJson(Map<String, dynamic> json) {
-    try {
-      return HomeState.fromJson(json);
-    } catch (_) {
-      return HomeState();
-    }
+    return HomeState();
   }
 
   @override

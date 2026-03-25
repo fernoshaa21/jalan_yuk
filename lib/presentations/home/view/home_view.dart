@@ -43,11 +43,10 @@ class _HomeViewState extends State<HomeView> {
     _popularScrollController.addListener(_onPopularScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final cubit = context.read<HomeCubit>();
-      if (cubit.state.popularStatus == HomeActivitiesStatus.initial &&
-          cubit.state.carouselStatus == HomeCarouselStatus.initial) {
-        cubit.loadInitialHomeData(carouselLimit: 6, popularLimit: 10);
-      }
+      context.read<HomeCubit>().loadInitialHomeData(
+        carouselLimit: 6,
+        popularLimit: 10,
+      );
     });
   }
 
@@ -114,6 +113,8 @@ class _HomeViewState extends State<HomeView> {
                         children: [
                           _buildCategoryChips(),
                           const SizedBox(height: 16),
+                          _buildQuickInsights(state),
+                          const SizedBox(height: 18),
                           _buildCarouselSection(state),
                           const SizedBox(height: 18),
                           _buildPopularSection(
@@ -293,26 +294,25 @@ class _HomeViewState extends State<HomeView> {
         final availableWidth = constraints.maxWidth;
         final carouselHeight = (availableWidth * 0.70).clamp(226.0, 270.0);
         final imageHeight = (carouselHeight * 0.56).clamp(120.0, 150.0);
+        final itemCount = state.carouselActivities.length;
 
         return CarouselSlider.builder(
-          itemCount: state.carouselActivities.length,
+          itemCount: itemCount,
           options: CarouselOptions(
             height: carouselHeight.toDouble(),
-            autoPlay: true,
-            enlargeCenterPage: true,
-            enlargeFactor: 0.06,
-            viewportFraction: 0.97,
-            padEnds: false,
+            autoPlay: false,
+            enableInfiniteScroll: false,
+            enlargeCenterPage: false,
+            viewportFraction: 1,
+            padEnds: true,
           ),
           itemBuilder: (context, index, realIndex) {
             final item = state.carouselActivities[index];
-            final imagePath = _resolveImage(item.imageUrl);
 
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: JalanYukActivityCard(
-                imagePath: imagePath,
-                isNetworkImage: _isNetworkUrl(imagePath),
+                imagePath: item.imageUrl ?? '',
                 title: item.title ?? '-',
                 ratingLabel: item.rating ?? '4.8',
                 locationLabel: item.location,
@@ -327,6 +327,136 @@ class _HomeViewState extends State<HomeView> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildQuickInsights(HomeState state) {
+    final allItems = <ActivitiesResponseData>[
+      ...state.carouselActivities,
+      ...state.popularActivities,
+    ];
+    final insightCards = [
+      _InsightCardData(
+        icon: Icons.explore_rounded,
+        label: 'Shown Now',
+        value:
+            '${allItems.where((item) => item.id != null).map((item) => item.id).toSet().length}',
+      ),
+      _InsightCardData(
+        icon: Icons.star_rounded,
+        label: 'Avg Rating',
+        value: _calculateAverageRating(allItems),
+      ),
+      _InsightCardData(
+        icon: Icons.category_rounded,
+        label: 'Top Category',
+        value: _buildTopCategoryLabel(allItems),
+      ),
+    ];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFF4FBF8), Color(0xFFE8F7F1)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFD5EEE4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Today\'s Snapshot',
+            style: TextStyle(
+              color: Color(0xFF111827),
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _buildSnapshotCaption(state, allItems),
+            style: const TextStyle(
+              color: Color(0xFF4B5563),
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: List.generate(insightCards.length, (index) {
+              final item = insightCards[index];
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    right: index == insightCards.length - 1 ? 0 : 10,
+                  ),
+                  child: _buildInsightCard(item),
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInsightCard(_InsightCardData item) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0C000000),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8F7F1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(item.icon, color: JalanYukColors.emeraldDark, size: 18),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            item.value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF111827),
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            item.label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF6B7280),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              height: 1.3,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -469,18 +599,6 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  String _resolveImage(String? imageUrl) {
-    if (imageUrl == null || imageUrl.trim().isEmpty) {
-      return 'assets/images/rentara_map.png';
-    }
-
-    return imageUrl;
-  }
-
-  bool _isNetworkUrl(String value) {
-    return value.startsWith('http://') || value.startsWith('https://');
-  }
-
   void _openActivityDetail(int? id) {
     if (id == null) {
       return;
@@ -572,6 +690,77 @@ class _HomeViewState extends State<HomeView> {
 
     return oneDecimal.toStringAsFixed(1).replaceAll('.0', '');
   }
+
+  String _calculateAverageRating(List<ActivitiesResponseData> items) {
+    final ratings = items
+        .map((item) => double.tryParse((item.rating ?? '').trim()))
+        .whereType<double>()
+        .toList();
+
+    if (ratings.isEmpty) {
+      return '-';
+    }
+
+    final average = ratings.reduce((a, b) => a + b) / ratings.length;
+    return average.toStringAsFixed(1);
+  }
+
+  String _buildTopCategoryLabel(List<ActivitiesResponseData> items) {
+    final counts = <Category, int>{};
+
+    for (final item in items) {
+      final category = item.category;
+      if (category == null) {
+        continue;
+      }
+      counts[category] = (counts[category] ?? 0) + 1;
+    }
+
+    if (counts.isEmpty) {
+      return 'Mixed';
+    }
+
+    final topEntry = counts.entries.reduce(
+      (current, next) => next.value > current.value ? next : current,
+    );
+
+    return _formatCategory(topEntry.key);
+  }
+
+  String _buildSnapshotCaption(
+    HomeState state,
+    List<ActivitiesResponseData> items,
+  ) {
+    if (items.isEmpty && state.isPopularFirstPageLoading) {
+      return 'Loading today\'s activity pulse for you.';
+    }
+
+    final activeFilter = _categories[_selectedCategoryIndex].label;
+    if (activeFilter != 'All') {
+      return 'Quick read for the $activeFilter picks currently on screen.';
+    }
+
+    return 'A fast overview of what travelers are exploring today.';
+  }
+
+  String _formatCategory(Category category) {
+    switch (category) {
+      case Category.adventure:
+        return 'Adventure';
+      case Category.nature:
+        return 'Nature';
+      case Category.culinary:
+        return 'Culinary';
+      case Category.waterSport:
+        return 'Water Sport';
+      case Category.cityTour:
+        return 'City Tour';
+      case Category.culture:
+        return 'Culture';
+      case Category.family:
+        return 'Family';
+    }
+  }
 }
 
 class _CategoryFilter {
@@ -579,4 +768,16 @@ class _CategoryFilter {
 
   final String label;
   final String? queryValue;
+}
+
+class _InsightCardData {
+  const _InsightCardData({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
 }

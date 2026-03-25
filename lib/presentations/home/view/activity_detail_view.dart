@@ -102,12 +102,8 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
   }
 
   Widget _buildHeroImage(DetailActivitiesData activity) {
-    final image = activity.imageUrl;
-    final hasNetworkImage = image != null && image.trim().isNotEmpty;
-
     return JalanYukImageBanner(
-      image: hasNetworkImage ? image : 'assets/images/rentara_map.png',
-      isNetwork: hasNetworkImage,
+      image: activity.imageUrl ?? '',
       borderRadius: 16,
       aspectRatio: 16 / 9,
     );

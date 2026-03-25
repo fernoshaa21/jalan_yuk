@@ -143,7 +143,7 @@ class _ExploreViewState extends State<ExploreView> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -233,25 +233,27 @@ class _ExploreViewState extends State<ExploreView> {
           LayoutBuilder(
             builder: (context, constraints) {
               final width = constraints.maxWidth;
-              final cardHeight = (width * 0.78).clamp(280.0, 340.0);
-              final imageHeight = (width * 0.50).clamp(180.0, 205.0);
+              final cardHeight = (width * 0.84).clamp(300.0, 368.0);
+              final imageHeight = (width * 0.50)
+                  .clamp(172.0, (cardHeight - 112).toDouble())
+                  .toDouble();
+              final itemCount = state.featuredActivities.length;
 
               return CarouselSlider.builder(
-                itemCount: state.featuredActivities.length,
+                key: ValueKey('explore-featured-carousel-$itemCount'),
+                itemCount: itemCount,
                 options: CarouselOptions(
                   height: cardHeight,
                   viewportFraction: 1,
-                  autoPlay: state.featuredActivities.length > 1,
-                  enableInfiniteScroll: state.featuredActivities.length > 1,
+                  autoPlay: itemCount > 1,
+                  enableInfiniteScroll: itemCount > 1,
                   enlargeCenterPage: false,
                 ),
                 itemBuilder: (context, index, realIndex) {
                   final item = state.featuredActivities[index];
-                  final imagePath = _resolveImage(item.imageUrl);
 
                   return JalanYukActivityCard(
-                    imagePath: imagePath,
-                    isNetworkImage: _isNetworkUrl(imagePath),
+                    imagePath: item.imageUrl ?? '',
                     title: item.title ?? '-',
                     priceLabel: _formatPrice(item.price),
                     ratingLabel: item.rating ?? '4.8',
@@ -331,11 +333,11 @@ class _ExploreViewState extends State<ExploreView> {
               }
 
               final item = state.activities[index];
+
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: JalanYukActivityCard(
-                  imagePath: _resolveImage(item.imageUrl),
-                  isNetworkImage: _isNetworkUrl(_resolveImage(item.imageUrl)),
+                  imagePath: item.imageUrl ?? '',
                   title: item.title ?? '-',
                   priceLabel: _priceWithRp(item.price),
                   ratingLabel: item.rating ?? '4.8',
@@ -355,18 +357,6 @@ class _ExploreViewState extends State<ExploreView> {
         ],
       ],
     );
-  }
-
-  String _resolveImage(String? imageUrl) {
-    if (imageUrl == null || imageUrl.trim().isEmpty) {
-      return 'assets/images/rentara_map.png';
-    }
-
-    return imageUrl;
-  }
-
-  bool _isNetworkUrl(String value) {
-    return value.startsWith('http://') || value.startsWith('https://');
   }
 
   String _priceWithRp(String? raw) {

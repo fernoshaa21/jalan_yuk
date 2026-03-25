@@ -314,7 +314,7 @@ $ActivitiesMetaCopyWith<$Res>? get meta {
 /// @nodoc
 mixin _$ActivitiesResponseData {
 
- int? get id; String? get title; String? get description; String? get location; String? get price; int? get availableSlots; int? get currentParticipants; String? get imageUrl; bool? get isFeatured; bool? get isActive; Category? get category; String? get rating; DateTime? get createdAt; DateTime? get updatedAt;
+@JsonKey(name: 'id') int? get id;@JsonKey(name: 'title') String? get title;@JsonKey(name: 'description') String? get description;@JsonKey(name: 'location') String? get location;@JsonKey(name: 'price') String? get price;@JsonKey(name: 'availableSlots') int? get availableSlots;@JsonKey(name: 'currentParticipants') int? get currentParticipants;@JsonKey(name: 'imageUrl') String? get imageUrl;@JsonKey(name: 'isFeatured') bool? get isFeatured;@JsonKey(name: 'isActive') bool? get isActive;@JsonKey(name: 'category') Category? get category;@JsonKey(name: 'rating') String? get rating;@JsonKey(name: 'createdAt') DateTime? get createdAt;@JsonKey(name: 'updatedAt') DateTime? get updatedAt;
 /// Create a copy of ActivitiesResponseData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -347,7 +347,7 @@ abstract mixin class $ActivitiesResponseDataCopyWith<$Res>  {
   factory $ActivitiesResponseDataCopyWith(ActivitiesResponseData value, $Res Function(ActivitiesResponseData) _then) = _$ActivitiesResponseDataCopyWithImpl;
 @useResult
 $Res call({
- int? id, String? title, String? description, String? location, String? price, int? availableSlots, int? currentParticipants, String? imageUrl, bool? isFeatured, bool? isActive, Category? category, String? rating, DateTime? createdAt, DateTime? updatedAt
+@JsonKey(name: 'id') int? id,@JsonKey(name: 'title') String? title,@JsonKey(name: 'description') String? description,@JsonKey(name: 'location') String? location,@JsonKey(name: 'price') String? price,@JsonKey(name: 'availableSlots') int? availableSlots,@JsonKey(name: 'currentParticipants') int? currentParticipants,@JsonKey(name: 'imageUrl') String? imageUrl,@JsonKey(name: 'isFeatured') bool? isFeatured,@JsonKey(name: 'isActive') bool? isActive,@JsonKey(name: 'category') Category? category,@JsonKey(name: 'rating') String? rating,@JsonKey(name: 'createdAt') DateTime? createdAt,@JsonKey(name: 'updatedAt') DateTime? updatedAt
 });
 
 
@@ -465,7 +465,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? id,  String? title,  String? description,  String? location,  String? price,  int? availableSlots,  int? currentParticipants,  String? imageUrl,  bool? isFeatured,  bool? isActive,  Category? category,  String? rating,  DateTime? createdAt,  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int? id, @JsonKey(name: 'title')  String? title, @JsonKey(name: 'description')  String? description, @JsonKey(name: 'location')  String? location, @JsonKey(name: 'price')  String? price, @JsonKey(name: 'availableSlots')  int? availableSlots, @JsonKey(name: 'currentParticipants')  int? currentParticipants, @JsonKey(name: 'imageUrl')  String? imageUrl, @JsonKey(name: 'isFeatured')  bool? isFeatured, @JsonKey(name: 'isActive')  bool? isActive, @JsonKey(name: 'category')  Category? category, @JsonKey(name: 'rating')  String? rating, @JsonKey(name: 'createdAt')  DateTime? createdAt, @JsonKey(name: 'updatedAt')  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ActivitiesResponseData() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.location,_that.price,_that.availableSlots,_that.currentParticipants,_that.imageUrl,_that.isFeatured,_that.isActive,_that.category,_that.rating,_that.createdAt,_that.updatedAt);case _:
@@ -486,7 +486,7 @@ return $default(_that.id,_that.title,_that.description,_that.location,_that.pric
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? id,  String? title,  String? description,  String? location,  String? price,  int? availableSlots,  int? currentParticipants,  String? imageUrl,  bool? isFeatured,  bool? isActive,  Category? category,  String? rating,  DateTime? createdAt,  DateTime? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int? id, @JsonKey(name: 'title')  String? title, @JsonKey(name: 'description')  String? description, @JsonKey(name: 'location')  String? location, @JsonKey(name: 'price')  String? price, @JsonKey(name: 'availableSlots')  int? availableSlots, @JsonKey(name: 'currentParticipants')  int? currentParticipants, @JsonKey(name: 'imageUrl')  String? imageUrl, @JsonKey(name: 'isFeatured')  bool? isFeatured, @JsonKey(name: 'isActive')  bool? isActive, @JsonKey(name: 'category')  Category? category, @JsonKey(name: 'rating')  String? rating, @JsonKey(name: 'createdAt')  DateTime? createdAt, @JsonKey(name: 'updatedAt')  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ActivitiesResponseData():
 return $default(_that.id,_that.title,_that.description,_that.location,_that.price,_that.availableSlots,_that.currentParticipants,_that.imageUrl,_that.isFeatured,_that.isActive,_that.category,_that.rating,_that.createdAt,_that.updatedAt);case _:
@@ -506,7 +506,7 @@ return $default(_that.id,_that.title,_that.description,_that.location,_that.pric
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? id,  String? title,  String? description,  String? location,  String? price,  int? availableSlots,  int? currentParticipants,  String? imageUrl,  bool? isFeatured,  bool? isActive,  Category? category,  String? rating,  DateTime? createdAt,  DateTime? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'id')  int? id, @JsonKey(name: 'title')  String? title, @JsonKey(name: 'description')  String? description, @JsonKey(name: 'location')  String? location, @JsonKey(name: 'price')  String? price, @JsonKey(name: 'availableSlots')  int? availableSlots, @JsonKey(name: 'currentParticipants')  int? currentParticipants, @JsonKey(name: 'imageUrl')  String? imageUrl, @JsonKey(name: 'isFeatured')  bool? isFeatured, @JsonKey(name: 'isActive')  bool? isActive, @JsonKey(name: 'category')  Category? category, @JsonKey(name: 'rating')  String? rating, @JsonKey(name: 'createdAt')  DateTime? createdAt, @JsonKey(name: 'updatedAt')  DateTime? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ActivitiesResponseData() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.location,_that.price,_that.availableSlots,_that.currentParticipants,_that.imageUrl,_that.isFeatured,_that.isActive,_that.category,_that.rating,_that.createdAt,_that.updatedAt);case _:
@@ -521,23 +521,23 @@ return $default(_that.id,_that.title,_that.description,_that.location,_that.pric
 @JsonSerializable()
 
 class _ActivitiesResponseData implements ActivitiesResponseData {
-  const _ActivitiesResponseData({this.id, this.title, this.description, this.location, this.price, this.availableSlots, this.currentParticipants, this.imageUrl, this.isFeatured, this.isActive, this.category, this.rating, this.createdAt, this.updatedAt});
+  const _ActivitiesResponseData({@JsonKey(name: 'id') this.id, @JsonKey(name: 'title') this.title, @JsonKey(name: 'description') this.description, @JsonKey(name: 'location') this.location, @JsonKey(name: 'price') this.price, @JsonKey(name: 'availableSlots') this.availableSlots, @JsonKey(name: 'currentParticipants') this.currentParticipants, @JsonKey(name: 'imageUrl') this.imageUrl, @JsonKey(name: 'isFeatured') this.isFeatured, @JsonKey(name: 'isActive') this.isActive, @JsonKey(name: 'category') this.category, @JsonKey(name: 'rating') this.rating, @JsonKey(name: 'createdAt') this.createdAt, @JsonKey(name: 'updatedAt') this.updatedAt});
   factory _ActivitiesResponseData.fromJson(Map<String, dynamic> json) => _$ActivitiesResponseDataFromJson(json);
 
-@override final  int? id;
-@override final  String? title;
-@override final  String? description;
-@override final  String? location;
-@override final  String? price;
-@override final  int? availableSlots;
-@override final  int? currentParticipants;
-@override final  String? imageUrl;
-@override final  bool? isFeatured;
-@override final  bool? isActive;
-@override final  Category? category;
-@override final  String? rating;
-@override final  DateTime? createdAt;
-@override final  DateTime? updatedAt;
+@override@JsonKey(name: 'id') final  int? id;
+@override@JsonKey(name: 'title') final  String? title;
+@override@JsonKey(name: 'description') final  String? description;
+@override@JsonKey(name: 'location') final  String? location;
+@override@JsonKey(name: 'price') final  String? price;
+@override@JsonKey(name: 'availableSlots') final  int? availableSlots;
+@override@JsonKey(name: 'currentParticipants') final  int? currentParticipants;
+@override@JsonKey(name: 'imageUrl') final  String? imageUrl;
+@override@JsonKey(name: 'isFeatured') final  bool? isFeatured;
+@override@JsonKey(name: 'isActive') final  bool? isActive;
+@override@JsonKey(name: 'category') final  Category? category;
+@override@JsonKey(name: 'rating') final  String? rating;
+@override@JsonKey(name: 'createdAt') final  DateTime? createdAt;
+@override@JsonKey(name: 'updatedAt') final  DateTime? updatedAt;
 
 /// Create a copy of ActivitiesResponseData
 /// with the given fields replaced by the non-null parameter values.
@@ -572,7 +572,7 @@ abstract mixin class _$ActivitiesResponseDataCopyWith<$Res> implements $Activiti
   factory _$ActivitiesResponseDataCopyWith(_ActivitiesResponseData value, $Res Function(_ActivitiesResponseData) _then) = __$ActivitiesResponseDataCopyWithImpl;
 @override @useResult
 $Res call({
- int? id, String? title, String? description, String? location, String? price, int? availableSlots, int? currentParticipants, String? imageUrl, bool? isFeatured, bool? isActive, Category? category, String? rating, DateTime? createdAt, DateTime? updatedAt
+@JsonKey(name: 'id') int? id,@JsonKey(name: 'title') String? title,@JsonKey(name: 'description') String? description,@JsonKey(name: 'location') String? location,@JsonKey(name: 'price') String? price,@JsonKey(name: 'availableSlots') int? availableSlots,@JsonKey(name: 'currentParticipants') int? currentParticipants,@JsonKey(name: 'imageUrl') String? imageUrl,@JsonKey(name: 'isFeatured') bool? isFeatured,@JsonKey(name: 'isActive') bool? isActive,@JsonKey(name: 'category') Category? category,@JsonKey(name: 'rating') String? rating,@JsonKey(name: 'createdAt') DateTime? createdAt,@JsonKey(name: 'updatedAt') DateTime? updatedAt
 });
 
 

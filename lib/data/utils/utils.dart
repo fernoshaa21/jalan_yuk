@@ -10,3 +10,4 @@ export 'parse_wrong_type_to_right_type.dart';
 export 'format_bytes.dart';
 
 export 'dev_log.dart';
+export 'activity_image_url_mapper.dart';

@@ -29,20 +29,20 @@ abstract class ActivitiesResponse with _$ActivitiesResponse {
 @freezed
 abstract class ActivitiesResponseData with _$ActivitiesResponseData {
   const factory ActivitiesResponseData({
-    int? id,
-    String? title,
-    String? description,
-    String? location,
-    String? price,
-    int? availableSlots,
-    int? currentParticipants,
-    String? imageUrl,
-    bool? isFeatured,
-    bool? isActive,
-    Category? category,
-    String? rating,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @JsonKey(name: 'id') int? id,
+    @JsonKey(name: 'title') String? title,
+    @JsonKey(name: 'description') String? description,
+    @JsonKey(name: 'location') String? location,
+    @JsonKey(name: 'price') String? price,
+    @JsonKey(name: 'availableSlots') int? availableSlots,
+    @JsonKey(name: 'currentParticipants') int? currentParticipants,
+    @JsonKey(name: 'imageUrl') String? imageUrl,
+    @JsonKey(name: 'isFeatured') bool? isFeatured,
+    @JsonKey(name: 'isActive') bool? isActive,
+    @JsonKey(name: 'category') Category? category,
+    @JsonKey(name: 'rating') String? rating,
+    @JsonKey(name: 'createdAt') DateTime? createdAt,
+    @JsonKey(name: 'updatedAt') DateTime? updatedAt,
   }) = _ActivitiesResponseData;
 
   factory ActivitiesResponseData.fromJson(Map<String, dynamic> json) =>

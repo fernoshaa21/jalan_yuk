@@ -4,6 +4,8 @@ import 'jalan_yuk_colors.dart';
 
 enum JalanYukButtonVariant { primary, secondary, outline }
 
+enum JalanYukButtonSize { regular, compact }
+
 class JalanYukButton extends StatelessWidget {
   const JalanYukButton({
     super.key,
@@ -14,6 +16,7 @@ class JalanYukButton extends StatelessWidget {
     this.expand = true,
     this.icon,
     this.variant = JalanYukButtonVariant.primary,
+    this.size = JalanYukButtonSize.regular,
   });
 
   final String label;
@@ -23,10 +26,14 @@ class JalanYukButton extends StatelessWidget {
   final bool expand;
   final Widget? icon;
   final JalanYukButtonVariant variant;
+  final JalanYukButtonSize size;
 
   @override
   Widget build(BuildContext context) {
     final disabled = onPressed == null || isLoading;
+    final isCompact = size == JalanYukButtonSize.compact;
+    final fontSize = isCompact ? 13.0 : 16.0;
+    final iconSpacing = isCompact ? 6.0 : 8.0;
 
     final bg = switch (variant) {
       JalanYukButtonVariant.primary => JalanYukColors.emerald,
@@ -51,15 +58,21 @@ class JalanYukButton extends StatelessWidget {
             child: CircularProgressIndicator(strokeWidth: 2, color: fg),
           )
         : Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (icon != null) ...[icon!, const SizedBox(width: 8)],
-              Text(
-                label,
-                style: TextStyle(
-                  color: fg,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+              if (icon != null) ...[icon!, SizedBox(width: iconSpacing)],
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: fg,
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
@@ -70,8 +83,11 @@ class JalanYukButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         elevation: 0,
         backgroundColor: bg,
-        disabledBackgroundColor: bg.withOpacity(0.7),
+        disabledBackgroundColor: bg.withValues(alpha: 0.7),
         foregroundColor: fg,
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        padding: EdgeInsets.symmetric(horizontal: isCompact ? 10 : 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         side: side,
       ),
