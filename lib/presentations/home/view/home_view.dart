@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -171,7 +170,7 @@ class _HomeViewState extends State<HomeView> {
             const SizedBox(height: 4),
             const Center(
               child: Text(
-                'Find your next Bali experience',
+                'Find your next your trip experience',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
@@ -289,44 +288,12 @@ class _HomeViewState extends State<HomeView> {
       );
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final availableWidth = constraints.maxWidth;
-        final carouselHeight = (availableWidth * 0.70).clamp(226.0, 270.0);
-        final imageHeight = (carouselHeight * 0.56).clamp(120.0, 150.0);
-        final itemCount = state.carouselActivities.length;
-
-        return CarouselSlider.builder(
-          itemCount: itemCount,
-          options: CarouselOptions(
-            height: carouselHeight.toDouble(),
-            autoPlay: false,
-            enableInfiniteScroll: false,
-            enlargeCenterPage: false,
-            viewportFraction: 1,
-            padEnds: true,
-          ),
-          itemBuilder: (context, index, realIndex) {
-            final item = state.carouselActivities[index];
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: JalanYukActivityCard(
-                imagePath: item.imageUrl ?? '',
-                title: item.title ?? '-',
-                ratingLabel: item.rating ?? '4.8',
-                locationLabel: item.location,
-                priceLabel: _formatPrice(item.price),
-                compact: true,
-                showBookButton: true,
-                imageHeight: imageHeight.toDouble(),
-                onTap: () => _openActivityDetail(item.id),
-                onBookTap: () => _openActivityDetail(item.id),
-              ),
-            );
-          },
-        );
-      },
+    return JalanYukFeaturedCarousel(
+      items: state.carouselActivities,
+      onOpenDetail: _openActivityDetail,
+      formatPrice: _formatPrice,
+      priceWithRp: _priceWithRp,
+      carouselKeyPrefix: 'home-featured-carousel',
     );
   }
 
@@ -643,6 +610,15 @@ class _HomeViewState extends State<HomeView> {
     }
 
     return _formatCompactNumber(value);
+  }
+
+  String _priceWithRp(String? raw) {
+    final price = _formatPrice(raw);
+    if (price == '-' || price.toLowerCase().startsWith('rp')) {
+      return price;
+    }
+
+    return 'Rp $price';
   }
 
   double? _parseFlexibleNumber(String value) {

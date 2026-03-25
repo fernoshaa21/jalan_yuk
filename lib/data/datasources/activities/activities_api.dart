@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
 import '../../../config.dart';
+import '../../../core/utilities/activity_image_resolver.dart';
 import '../../../domain/entities/activities/activities.dart';
-import '../../utils/activity_image_url_mapper.dart';
 
 abstract class ActivitiesApi {
   Future<ActivitiesResponse> getActivities(ActivitiesQuery query);
@@ -59,18 +58,7 @@ class ActivitiesApiImpl implements ActivitiesApi {
       throw Exception('Invalid /activities/featured response format');
     }
 
-    final parsed = ActivitiesResponse.fromJson(
-      _normalizeActivitiesPayload(raw),
-    );
-    assert(() {
-      final preview = parsed.data
-          .take(5)
-          .map((item) => '${item.id}:${item.imageUrl}')
-          .join(' | ');
-      debugPrint('[ActivitiesApi][featured-from-backend] $preview');
-      return true;
-    }());
-    return parsed;
+    return ActivitiesResponse.fromJson(_normalizeActivitiesPayload(raw));
   }
 
   Map<String, dynamic> _normalizeActivitiesPayload(Map<String, dynamic> raw) {
@@ -108,21 +96,10 @@ class ActivitiesApiImpl implements ActivitiesApi {
   Map<String, dynamic> _normalizeItemImage(Map<String, dynamic> item) {
     final normalized = Map<String, dynamic>.from(item);
     final rawImage = _extractRawImageUrl(normalized);
-    final category = _extractCategory(normalized);
-    final finalImageUrl = ActivityImageUrlMapper.resolve(
-      rawImageUrl: rawImage,
-      category: category,
+    normalized['imageUrl'] = ActivityImageResolver.resolvePath(
+      rawImage,
       baseUrl: AppConfig.baseUrl,
     );
-
-    normalized['imageUrl'] = finalImageUrl;
-
-    assert(() {
-      debugPrint(
-        '[ActivitiesImageMap] id=${normalized['id']} category=$category raw=$rawImage final=$finalImageUrl',
-      );
-      return true;
-    }());
 
     return normalized;
   }
@@ -140,22 +117,6 @@ class ActivitiesApiImpl implements ActivitiesApi {
     if (media is Map) {
       final casted = Map<String, dynamic>.from(media);
       return _asText(casted['imageUrl']) ?? _asText(casted['url']);
-    }
-
-    return null;
-  }
-
-  String? _extractCategory(Map<String, dynamic> item) {
-    final rawCategory = item['category'];
-    if (rawCategory is String) {
-      return rawCategory;
-    }
-    if (rawCategory is Map<String, dynamic>) {
-      return _asText(rawCategory['name']) ?? _asText(rawCategory['slug']);
-    }
-    if (rawCategory is Map) {
-      final casted = Map<String, dynamic>.from(rawCategory);
-      return _asText(casted['name']) ?? _asText(casted['slug']);
     }
 
     return null;

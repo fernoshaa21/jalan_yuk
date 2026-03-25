@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -230,46 +229,12 @@ class _ExploreViewState extends State<ExploreView> {
             message: 'Please check again later.',
           )
         else
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final width = constraints.maxWidth;
-              final cardHeight = (width * 0.84).clamp(300.0, 368.0);
-              final imageHeight = (width * 0.50)
-                  .clamp(172.0, (cardHeight - 112).toDouble())
-                  .toDouble();
-              final itemCount = state.featuredActivities.length;
-
-              return CarouselSlider.builder(
-                key: ValueKey('explore-featured-carousel-$itemCount'),
-                itemCount: itemCount,
-                options: CarouselOptions(
-                  height: cardHeight,
-                  viewportFraction: 1,
-                  autoPlay: itemCount > 1,
-                  enableInfiniteScroll: itemCount > 1,
-                  enlargeCenterPage: false,
-                ),
-                itemBuilder: (context, index, realIndex) {
-                  final item = state.featuredActivities[index];
-
-                  return JalanYukActivityCard(
-                    imagePath: item.imageUrl ?? '',
-                    title: item.title ?? '-',
-                    priceLabel: _formatPrice(item.price),
-                    ratingLabel: item.rating ?? '4.8',
-                    locationLabel: item.location,
-                    bookLabel: _priceWithRp(item.price),
-                    imageHeight: imageHeight,
-                    borderRadius: 20,
-                    compact: false,
-                    showShadow: true,
-                    showFullWidthImage: true,
-                    onTap: () => _openActivityDetail(item.id),
-                    onBookTap: () => _openActivityDetail(item.id),
-                  );
-                },
-              );
-            },
+          JalanYukFeaturedCarousel(
+            items: state.featuredActivities,
+            onOpenDetail: _openActivityDetail,
+            formatPrice: _formatPrice,
+            priceWithRp: _priceWithRp,
+            carouselKeyPrefix: 'explore-featured-carousel',
           ),
       ],
     );
