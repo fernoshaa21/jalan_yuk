@@ -4,6 +4,7 @@ export 'jalan_yuk_bottom_navigation_bar.dart';
 export 'jalan_yuk_button.dart';
 export 'jalan_yuk_chip.dart';
 export 'jalan_yuk_colors.dart';
+export 'jalan_yuk_header.dart';
 export 'jalan_yuk_image_banner.dart';
 export 'jalan_yuk_quantity_stepper.dart';
 export 'jalan_yuk_section_title.dart';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jalan_yuk/lib.dart';
+import 'package:jalan_yuk/presentations/explore/cubit/explore_cubit.dart';
 import 'package:jalan_yuk/presentations/home/cubit/detail_activities_cubit.dart';
 
 final dashboardNavigatorKey = GlobalKey<NavigatorState>();
@@ -44,7 +45,10 @@ final router = GoRouter(
             GoRoute(
               path: '/dashboard/explore',
               name: 'dashboard_explore',
-              builder: (context, state) => const ExploreView(),
+              builder: (context, state) => BlocProvider<ExploreCubit>(
+                create: (_) => di<ExploreCubit>(),
+                child: const ExploreView(),
+              ),
             ),
           ],
         ),

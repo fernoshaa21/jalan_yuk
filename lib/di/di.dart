@@ -9,6 +9,7 @@ import 'package:jalan_yuk/config.dart';
 import 'package:jalan_yuk/data/utils/dio_token_interceptor.dart';
 import 'package:jalan_yuk/domain/usecases/auth/register_usecase.dart';
 import 'package:jalan_yuk/presentations/auth/cubit/auth_cubit.dart';
+import 'package:jalan_yuk/presentations/explore/cubit/explore_cubit.dart';
 import 'package:jalan_yuk/presentations/home/cubit/detail_activities_cubit.dart';
 import 'package:jalan_yuk/presentations/home/cubit/home_cubit.dart';
 
@@ -64,6 +65,7 @@ void _cubits() {
   //Cubits use MultiBlocProvider (RegisterSingleton Injections)
   di.registerLazySingleton(() => AuthCubit(di(), di()));
   di.registerLazySingleton(() => HomeCubit(di(), di()));
+  di.registerFactory(() => ExploreCubit(di(), di()));
   di.registerFactory(() => DetailActivitiesCubit(di()));
 }
 

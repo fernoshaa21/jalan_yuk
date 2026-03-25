@@ -1,5 +1,13 @@
+import 'dart:async';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jalan_yuk/core/core.dart';
+
+import '../cubit/explore_cubit.dart';
+import '../cubit/explore_state.dart';
 
 class ExploreView extends StatefulWidget {
   const ExploreView({super.key});
@@ -9,132 +17,122 @@ class ExploreView extends StatefulWidget {
 }
 
 class _ExploreViewState extends State<ExploreView> {
-  static const List<String> _filters = ['All', 'Adventure', 'Family', 'Nature'];
-
-  static const _featuredActivity = _ExploreActivity(
-    title: 'Ubud ATV Jungle Ride',
-    location: 'Ubud',
-    rating: '4.8',
-    price: 'Rp 420k',
-    ctaLabel: 'For \$99s',
-    imagePath: 'assets/images/rentara_map.png',
-    category: 'Adventure',
-  );
-
-  static const List<_ExploreActivity> _compactActivities = [
-    _ExploreActivity(
-      title: 'Sunrise Jeep Tour',
-      price: 'Rp 420k',
-      ctaLabel: 'Rp 450k',
-      imagePath: 'assets/images/rentara.png',
-      category: 'Adventure',
-    ),
-    _ExploreActivity(
-      title: 'Bali Canyon Tubing',
-      price: 'Rp 375k',
-      ctaLabel: 'Rp 375k',
-      imagePath: 'assets/images/rentara_map.png',
-      category: 'Nature',
-    ),
-    _ExploreActivity(
-      title: 'Nusa Penida Day Trip',
-      price: 'Rp 850k',
-      ctaLabel: 'Rp 850k',
-      imagePath: 'assets/images/map_sample.png',
-      category: 'Family',
-    ),
+  static const List<_CategoryFilter> _filters = [
+    _CategoryFilter(label: 'All', queryValue: null),
+    _CategoryFilter(label: 'Adventure', queryValue: 'adventure'),
+    _CategoryFilter(label: 'Nature', queryValue: 'nature'),
+    _CategoryFilter(label: 'Culinary', queryValue: 'culinary'),
+    _CategoryFilter(label: 'City Tour', queryValue: 'city-tour'),
+    _CategoryFilter(label: 'Water Sport', queryValue: 'water-sport'),
+    _CategoryFilter(label: 'Culture', queryValue: 'culture'),
+    _CategoryFilter(label: 'Family', queryValue: 'family'),
   ];
 
   final TextEditingController _searchController = TextEditingController();
-  String _activeFilter = _filters.first;
+  final ScrollController _scrollController = ScrollController();
+  Timer? _searchDebounce;
+  int _selectedFilterIndex = 0;
 
-  List<_ExploreActivity> get _visibleCompactActivities {
-    if (_activeFilter == 'All') {
-      return _compactActivities;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
 
-    return _compactActivities
-        .where((activity) => activity.category == _activeFilter)
-        .toList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ExploreCubit>().loadInitialExploreData(
+        featuredLimit: 5,
+        activitiesLimit: 10,
+      );
+    });
   }
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) {
+      return;
+    }
+
+    if (_scrollController.position.extentAfter < 260) {
+      context.read<ExploreCubit>().loadNextActivities();
+    }
+  }
+
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 450), () {
+      context.read<ExploreCubit>().loadInitialExploreData(
+        search: value,
+        category: _filters[_selectedFilterIndex].queryValue,
+        featuredLimit: 5,
+        activitiesLimit: 10,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          _buildExploreHeader(),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 98, 16, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSearchBar(),
-                  const SizedBox(height: 14),
-                  _buildFilterChips(),
-                  const SizedBox(height: 18),
-                  const JalanYukSectionTitle(title: 'Popular'),
-                  const SizedBox(height: 12),
-                  _buildFeaturedActivityCard(),
-                  const SizedBox(height: 10),
-                  _buildCompactActivityList(),
-                  const SizedBox(height: 14),
-                  const Center(
-                    child: Text(
-                      'Load more...',
-                      style: TextStyle(
-                        color: JalanYukColors.textSecondary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+    return SafeArea(
+      top: false,
+      child: BlocBuilder<ExploreCubit, ExploreState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: JalanYukColors.emeraldDark,
+            body: Column(
+              children: [
+                const JalanYukHeader(title: 'Explore', height: 180),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF8F8F8),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(24),
+                      ),
+                    ),
+                    child: RefreshIndicator(
+                      color: JalanYukColors.emerald,
+                      onRefresh: () =>
+                          context.read<ExploreCubit>().refreshExploreData(),
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(bottom: 22),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                              child: _buildSearchBar(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                              child: _buildFilterChips(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                              child: _buildFeaturedSection(state),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
+                              child: _buildActivitiesSection(state),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildExploreHeader() {
-    return Container(
-      height: 168,
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [JalanYukColors.emeraldDark, JalanYukColors.emerald],
-        ),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
-      ),
-      child: const SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.only(top: 10),
-          child: Center(
-            child: Text(
-              'Explore',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 50,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.3,
-                height: 1,
-              ),
-            ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -143,17 +141,18 @@ class _ExploreViewState extends State<ExploreView> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x1A000000),
-            blurRadius: 12,
-            offset: Offset(0, 2),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: JalanYukTextField(
         controller: _searchController,
         hint: 'Search activities',
+        onChanged: _onSearchChanged,
         borderRadius: 16,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
@@ -177,9 +176,19 @@ class _ExploreViewState extends State<ExploreView> {
               (filter) => Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: JalanYukChip(
-                  label: filter,
-                  selected: _activeFilter == filter,
-                  onTap: () => setState(() => _activeFilter = filter),
+                  label: filter.label,
+                  selected:
+                      _filters[_selectedFilterIndex].label == filter.label,
+                  onTap: () {
+                    final index = _filters.indexOf(filter);
+                    setState(() => _selectedFilterIndex = index);
+                    context.read<ExploreCubit>().loadInitialExploreData(
+                      search: _searchController.text,
+                      category: filter.queryValue,
+                      featuredLimit: 5,
+                      activitiesLimit: 10,
+                    );
+                  },
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 11,
@@ -192,172 +201,279 @@ class _ExploreViewState extends State<ExploreView> {
     );
   }
 
-  Widget _buildFeaturedActivityCard() {
-    return JalanYukActivityCard(
-      imagePath: _featuredActivity.imagePath,
-      title: _featuredActivity.title,
-      priceLabel: _featuredActivity.price,
-      ratingLabel: _featuredActivity.rating,
-      locationLabel: _featuredActivity.location,
-      bookLabel: _featuredActivity.ctaLabel,
-      onBookTap: null,
-    );
-  }
-
-  Widget _buildCompactActivityList() {
-    final activities = _visibleCompactActivities;
-
-    if (activities.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 6),
-        child: Text(
-          'No activities found in this category yet.',
-          style: TextStyle(
-            color: JalanYukColors.textSecondary,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      );
-    }
-
+  Widget _buildFeaturedSection(ExploreState state) {
     return Column(
-      children: activities
-          .map(
-            (activity) => Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: _CompactActivityCard(activity: activity),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const JalanYukSectionTitle(title: 'Popular'),
+        const SizedBox(height: 12),
+        if (state.isFeaturedLoading ||
+            (state.featuredStatus == ExploreSectionStatus.initial &&
+                state.featuredActivities.isEmpty))
+          const JalanYukStateView(type: JalanYukStateType.loading)
+        else if (state.isFeaturedError)
+          JalanYukStateView(
+            type: JalanYukStateType.error,
+            title: 'Failed to load featured activities',
+            message: state.featuredErrorMessage,
+            onRetry: () => context.read<ExploreCubit>().loadInitialExploreData(
+              search: _searchController.text,
+              category: _filters[_selectedFilterIndex].queryValue,
+              featuredLimit: 5,
+              activitiesLimit: state.activitiesLimit,
             ),
           )
-          .toList(),
+        else if (state.isFeaturedEmpty)
+          const JalanYukStateView(
+            type: JalanYukStateType.empty,
+            title: 'No featured activities',
+            message: 'Please check again later.',
+          )
+        else
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth;
+              final cardHeight = (width * 0.78).clamp(280.0, 340.0);
+              final imageHeight = (width * 0.50).clamp(180.0, 205.0);
+
+              return CarouselSlider.builder(
+                itemCount: state.featuredActivities.length,
+                options: CarouselOptions(
+                  height: cardHeight,
+                  viewportFraction: 1,
+                  autoPlay: state.featuredActivities.length > 1,
+                  enableInfiniteScroll: state.featuredActivities.length > 1,
+                  enlargeCenterPage: false,
+                ),
+                itemBuilder: (context, index, realIndex) {
+                  final item = state.featuredActivities[index];
+                  final imagePath = _resolveImage(item.imageUrl);
+
+                  return JalanYukActivityCard(
+                    imagePath: imagePath,
+                    isNetworkImage: _isNetworkUrl(imagePath),
+                    title: item.title ?? '-',
+                    priceLabel: _formatPrice(item.price),
+                    ratingLabel: item.rating ?? '4.8',
+                    locationLabel: item.location,
+                    bookLabel: _priceWithRp(item.price),
+                    imageHeight: imageHeight,
+                    borderRadius: 20,
+                    compact: false,
+                    showShadow: true,
+                    showFullWidthImage: true,
+                    onTap: () => _openActivityDetail(item.id),
+                    onBookTap: () => _openActivityDetail(item.id),
+                  );
+                },
+              );
+            },
+          ),
+      ],
     );
   }
-}
 
-class _CompactActivityCard extends StatelessWidget {
-  const _CompactActivityCard({required this.activity});
-
-  final _ExploreActivity activity;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: JalanYukColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x12000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 116,
-              height: 95,
-              child: JalanYukImageBanner(
-                image: activity.imagePath,
-                borderRadius: 0,
-                height: 95,
-              ),
+  Widget _buildActivitiesSection(ExploreState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const JalanYukSectionTitle(title: 'All Activities'),
+        const SizedBox(height: 12),
+        if (state.isActivitiesLoading ||
+            (state.activitiesStatus == ExploreSectionStatus.initial &&
+                state.activities.isEmpty))
+          const JalanYukStateView(type: JalanYukStateType.loading)
+        else if (state.isActivitiesError && state.activities.isEmpty)
+          JalanYukStateView(
+            type: JalanYukStateType.error,
+            title: 'Failed to load activities',
+            message: state.activitiesErrorMessage,
+            onRetry: () => context.read<ExploreCubit>().loadInitialExploreData(
+              search: _searchController.text,
+              category: _filters[_selectedFilterIndex].queryValue,
+              featuredLimit: 5,
+              activitiesLimit: state.activitiesLimit,
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 10, 10, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      activity.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        height: 1.1,
-                        color: JalanYukColors.textPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.star_rounded,
-                          size: 18,
-                          color: Color(0xFFFACC15),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          activity.price,
-                          style: const TextStyle(
-                            color: JalanYukColors.textPrimary,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+          )
+        else if (state.isActivitiesEmpty)
+          const JalanYukStateView(
+            type: JalanYukStateType.empty,
+            title: 'No activities found',
+            message: 'Try another search or category.',
+          )
+        else ...[
+          ListView.builder(
+            itemCount: state.activities.length + 1,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              if (index == state.activities.length) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 14),
+                  child: state.isActivitiesLoadingMore
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: JalanYukColors.emerald,
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            state.activitiesHasNextPage
+                                ? 'Scroll down to load more...'
+                                : 'No more activities',
+                            style: const TextStyle(
+                              color: JalanYukColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                        const Spacer(),
-                        _PriceTag(label: activity.ctaLabel),
-                      ],
-                    ),
-                  ],
+                );
+              }
+
+              final item = state.activities[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: JalanYukActivityCard(
+                  imagePath: _resolveImage(item.imageUrl),
+                  isNetworkImage: _isNetworkUrl(_resolveImage(item.imageUrl)),
+                  title: item.title ?? '-',
+                  priceLabel: _priceWithRp(item.price),
+                  ratingLabel: item.rating ?? '4.8',
+                  bookLabel: _priceWithRp(item.price),
+                  compact: true,
+                  horizontal: true,
+                  imageWidth: 100,
+                  imageHeight: 80,
+                  borderRadius: 16,
+                  showShadow: true,
+                  onTap: () => _openActivityDetail(item.id),
+                  onBookTap: () => _openActivityDetail(item.id),
                 ),
-              ),
-            ),
-          ],
-        ),
-      ),
+              );
+            },
+          ),
+        ],
+      ],
     );
+  }
+
+  String _resolveImage(String? imageUrl) {
+    if (imageUrl == null || imageUrl.trim().isEmpty) {
+      return 'assets/images/rentara_map.png';
+    }
+
+    return imageUrl;
+  }
+
+  bool _isNetworkUrl(String value) {
+    return value.startsWith('http://') || value.startsWith('https://');
+  }
+
+  String _priceWithRp(String? raw) {
+    final price = _formatPrice(raw);
+    if (price == '-' || price.toLowerCase().startsWith('rp')) {
+      return price;
+    }
+
+    return 'Rp $price';
+  }
+
+  String _formatPrice(String? raw) {
+    if (raw == null || raw.trim().isEmpty) {
+      return '-';
+    }
+
+    final text = raw.trim();
+    final lower = text.toLowerCase();
+
+    if (lower.contains('jt')) {
+      return text;
+    }
+
+    if (lower.contains('k')) {
+      return text.replaceAll(RegExp(r'k', caseSensitive: false), 'K');
+    }
+
+    final numericRaw = text.replaceAll(RegExp(r'[^0-9.,]'), '');
+    final value = _parseFlexibleNumber(numericRaw);
+    if (value == null) {
+      return text;
+    }
+
+    if (value >= 1000000) {
+      return '${_formatCompactNumber(value / 1000000)}jt';
+    }
+
+    if (value >= 1000) {
+      return '${_formatCompactNumber(value / 1000)}K';
+    }
+
+    final isDecimalShort = RegExp(r'^\d+[.,]\d{1,2}$').hasMatch(numericRaw);
+    if (isDecimalShort) {
+      return '${_formatCompactNumber(value)}K';
+    }
+
+    return _formatCompactNumber(value);
+  }
+
+  double? _parseFlexibleNumber(String value) {
+    if (value.isEmpty) {
+      return null;
+    }
+
+    var text = value;
+    final lastDot = text.lastIndexOf('.');
+    final lastComma = text.lastIndexOf(',');
+
+    if (lastDot != -1 && lastComma != -1) {
+      final decimalIndex = lastDot > lastComma ? lastDot : lastComma;
+      final decimalSeparator = text[decimalIndex];
+      final thousandSeparator = decimalSeparator == '.' ? ',' : '.';
+
+      text = text.replaceAll(thousandSeparator, '');
+      text = text.replaceAll(decimalSeparator, '.');
+      return double.tryParse(text);
+    }
+
+    if (lastDot != -1 || lastComma != -1) {
+      final separatorIndex = lastDot != -1 ? lastDot : lastComma;
+      final separator = text[separatorIndex];
+      final fractionLength = text.length - separatorIndex - 1;
+
+      final isDecimal = fractionLength > 0 && fractionLength <= 2;
+      if (isDecimal) {
+        text = text.replaceAll(separator, '.');
+        return double.tryParse(text);
+      }
+
+      text = text.replaceAll(separator, '');
+      return double.tryParse(text);
+    }
+
+    return double.tryParse(text);
+  }
+
+  String _formatCompactNumber(double value) {
+    final oneDecimal = (value * 10).round() / 10;
+    if (oneDecimal % 1 == 0) {
+      return oneDecimal.toInt().toString();
+    }
+
+    return oneDecimal.toStringAsFixed(1).replaceAll('.0', '');
+  }
+
+  void _openActivityDetail(int? id) {
+    if (id == null) {
+      return;
+    }
+
+    context.pushNamed('activity_detail', pathParameters: {'id': '$id'});
   }
 }
 
-class _PriceTag extends StatelessWidget {
-  const _PriceTag({required this.label});
+class _CategoryFilter {
+  const _CategoryFilter({required this.label, required this.queryValue});
 
   final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: JalanYukColors.emeraldDark,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          height: 1,
-        ),
-      ),
-    );
-  }
-}
-
-class _ExploreActivity {
-  const _ExploreActivity({
-    required this.title,
-    required this.price,
-    required this.ctaLabel,
-    required this.imagePath,
-    required this.category,
-    this.location = '',
-    this.rating = '4.8',
-  });
-
-  final String title;
-  final String price;
-  final String ctaLabel;
-  final String imagePath;
-  final String category;
-  final String location;
-  final String rating;
+  final String? queryValue;
 }
