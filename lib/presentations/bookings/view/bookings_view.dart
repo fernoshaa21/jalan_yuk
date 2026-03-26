@@ -1,28 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:jalan_yuk/core/core.dart';
 
-class BookingListItem {
-  const BookingListItem({
-    required this.id,
-    required this.title,
-    required this.dateLabel,
-    required this.price,
-    required this.category,
-    required this.imagePath,
-    this.status,
-    this.guestCount = '2 Guests',
-  });
-
-  final String id;
-  final String title;
-  final String dateLabel;
-  final String price;
-  final String category;
-  final String imagePath;
-  final String? status;
-  final String guestCount;
-}
+import '../../../domain/entities/bookings/bookings_list_response.dart';
+import '../cubit/bookings_cubit.dart';
+import '../cubit/bookings_state.dart';
 
 class BookingDetailExtra {
   const BookingDetailExtra({
@@ -30,12 +14,14 @@ class BookingDetailExtra {
     required this.bookingDate,
     required this.guestCount,
     required this.totalPrice,
+    required this.bookingId,
   });
 
   final String activityTitle;
   final String bookingDate;
   final String guestCount;
   final String totalPrice;
+  final String bookingId;
 }
 
 class BookingsView extends StatefulWidget {
@@ -47,52 +33,27 @@ class BookingsView extends StatefulWidget {
 
 class _BookingsViewState extends State<BookingsView> {
   final TextEditingController _searchController = TextEditingController();
-  static const List<String> _filters = ['All', 'Adventure', 'Family', 'Nature'];
+  static const List<String> _baseFilters = [
+    'All',
+    'Adventure',
+    'Nature',
+    'Culinary',
+    'City Tour',
+    'Water Sport',
+    'Culture',
+    'Family',
+  ];
 
   String _activeFilter = 'All';
 
-  static const List<BookingListItem> _dummyBookings = [
-    BookingListItem(
-      id: 'bk-1',
-      title: 'ATV Jungle Ride',
-      dateLabel: 'Tomorrow',
-      price: 'Rp 450k',
-      status: 'Paid',
-      category: 'Adventure',
-      imagePath: 'assets/images/rentara_map.png',
-    ),
-    BookingListItem(
-      id: 'bk-2',
-      title: 'Wine Tasting',
-      dateLabel: '25 Mar',
-      price: 'Rp 650k',
-      status: 'Pending',
-      category: 'Family',
-      imagePath: 'assets/images/rentara_map.png',
-    ),
-    BookingListItem(
-      id: 'bk-3',
-      title: 'Rafting Adventure',
-      dateLabel: '12 Mar',
-      price: 'Rp 375k',
-      category: 'Nature',
-      imagePath: 'assets/images/rentara_map.png',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
 
-  List<BookingListItem> get _filteredItems {
-    final query = _searchController.text.trim().toLowerCase();
-
-    return _dummyBookings.where((item) {
-      final matchesFilter =
-          _activeFilter == 'All' || item.category == _activeFilter;
-      final matchesSearch =
-          query.isEmpty ||
-          item.title.toLowerCase().contains(query) ||
-          item.dateLabel.toLowerCase().contains(query);
-
-      return matchesFilter && matchesSearch;
-    }).toList();
+    final cubit = context.read<BookingsCubit>();
+    if (cubit.state.isInitial) {
+      cubit.loadMyBookings();
+    }
   }
 
   @override
@@ -103,52 +64,90 @@ class _BookingsViewState extends State<BookingsView> {
 
   @override
   Widget build(BuildContext context) {
-    final items = _filteredItems;
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const JalanYukAppBar(title: 'My Bookings', showBackButton: false),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSearchBar(),
-              const SizedBox(height: 12),
-              _buildFilterChips(),
-              const SizedBox(height: 18),
-              _buildBookingSectionTitle(),
-              const SizedBox(height: 12),
-              if (items.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: JalanYukStateView(
-                    type: JalanYukStateType.empty,
-                    title: 'No bookings found',
-                    message: 'Try a different keyword or filter.',
-                  ),
-                )
-              else ...[
-                ...items.map(
-                  (item) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: _buildBookingCard(item),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Load more...',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: JalanYukColors.textSecondary,
-                  ),
-                ),
-              ],
-            ],
-          ),
+        child: BlocBuilder<BookingsCubit, BookingsState>(
+          builder: (context, state) {
+            if (state.isLoading) {
+              return const JalanYukStateView(type: JalanYukStateType.loading);
+            }
+
+            if (state.isError) {
+              return JalanYukStateView(
+                type: JalanYukStateType.error,
+                title: 'Failed to load bookings',
+                message: state.errorMessage,
+                onRetry: () => context.read<BookingsCubit>().loadMyBookings(),
+              );
+            }
+
+            if (state.isEmpty) {
+              return JalanYukStateView(
+                type: JalanYukStateType.empty,
+                title: 'No bookings yet',
+                message: 'Your bookings will appear here after you make one.',
+                onRetry: () => context.read<BookingsCubit>().loadMyBookings(),
+              );
+            }
+
+            final filters = _buildFilters(state.bookings);
+            final filteredBookings = _applyFilters(state.bookings);
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSearchBar(),
+                  const SizedBox(height: 12),
+                  _buildFilterChips(filters),
+
+                  const SizedBox(height: 12),
+                  if (filteredBookings.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: JalanYukStateView(
+                        type: JalanYukStateType.empty,
+                        title: 'No bookings found',
+                        message: 'Try a different keyword or category.',
+                      ),
+                    )
+                  else ...[
+                    ...filteredBookings.map(
+                      (item) => Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: InkWell(
+                          child: _buildBookingCard(item),
+                          onTap: () {
+                            context.pushNamed(
+                              'payment',
+                              extra: BookingDetailExtra(
+                                activityTitle: item.activity?.title ?? '-',
+                                bookingDate: item.bookingDate != null
+                                    ? DateFormat(
+                                        'dd MMM yyyy',
+                                      ).format(item.bookingDate!)
+                                    : '-',
+                                guestCount:
+                                    '${item.qty ?? 0} guest${(item.qty ?? 0) == 1 ? '' : 's'}',
+                                totalPrice: _formatCompactRupiah(
+                                  item.totalPrice ?? 0,
+                                ),
+                                bookingId: item.id ?? '',
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -161,39 +160,49 @@ class _BookingsViewState extends State<BookingsView> {
       prefixIcon: const Icon(Icons.search_rounded, color: JalanYukColors.hint),
       onChanged: (_) => setState(() {}),
       textInputAction: TextInputAction.search,
+      borderRadius: 16,
     );
   }
 
-  Widget _buildFilterChips() {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: _filters
-          .map(
-            (label) => JalanYukChip(
+  Widget _buildFilterChips(List<String> filters) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(filters.length, (index) {
+          final label = filters[index];
+          return Padding(
+            padding: EdgeInsets.only(
+              right: index == filters.length - 1 ? 0 : 10,
+            ),
+            child: JalanYukChip(
               label: label,
               selected: _activeFilter == label,
               onTap: () => setState(() => _activeFilter = label),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             ),
-          )
-          .toList(),
+          );
+        }),
+      ),
     );
   }
 
-  Widget _buildBookingSectionTitle() {
-    return const JalanYukSectionTitle(title: 'Batur Sunrise');
-  }
+  Widget _buildBookingCard(BookingListResponseData item) {
+    final title = item.activity?.title?.trim();
+    final bookingDate = item.bookingDate;
+    final qty = item.qty ?? 0;
+    final status = _resolveStatus(item);
+    final imageUrl = item.activity?.imageUrl?.trim();
+    final priceLabel = _formatCompactRupiah(item.totalPrice ?? 0);
 
-  Widget _buildBookingCard(BookingListItem item) {
     return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () => context.push('/booking_detail'),
+      borderRadius: BorderRadius.circular(16),
+      onTap: () {},
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: JalanYukColors.border),
           boxShadow: const [
             BoxShadow(
@@ -206,106 +215,204 @@ class _BookingsViewState extends State<BookingsView> {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                item.imagePath,
-                width: 84,
-                height: 64,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 84,
-                  height: 64,
-                  color: JalanYukColors.surface,
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    Icons.image_not_supported_outlined,
-                    color: JalanYukColors.hint,
-                  ),
-                ),
-              ),
+              borderRadius: BorderRadius.circular(12),
+              child: _buildImage(imageUrl),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
-                          item.title,
-                          maxLines: 1,
+                          title != null && title.isNotEmpty ? title : '-',
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 19,
+                            fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: JalanYukColors.textPrimary,
                             height: 1.1,
                           ),
                         ),
                       ),
-                      if (item.status != null) ...[
+                      if (status != null) ...[
                         const SizedBox(width: 8),
-                        _buildStatusBadge(item.status!),
+                        _buildStatusBadge(status),
                       ],
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
-                      Text(
-                        item.dateLabel,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: JalanYukColors.textSecondary,
+                      Expanded(
+                        child: Text(
+                          bookingDate != null
+                              ? DateFormat('dd MMM').format(bookingDate)
+                              : '-',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: JalanYukColors.textSecondary,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 10),
                       Text(
-                        item.price,
+                        priceLabel,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: JalanYukColors.textPrimary,
-                          height: 1,
                         ),
                       ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        color: JalanYukColors.textSecondary,
+                      ),
                     ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$qty guest${qty == 1 ? '' : 's'}',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: JalanYukColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 4),
-            const Icon(Icons.chevron_right_rounded, color: JalanYukColors.hint),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatusBadge(String status) {
-    final isPaid = status.toLowerCase() == 'paid';
-    final bgColor = isPaid ? const Color(0xFFEAF8E6) : const Color(0xFFFFF4E6);
-    final textColor = isPaid
-        ? const Color(0xFF65A30D)
-        : const Color(0xFFD97706);
+  List<String> _buildFilters(List<BookingListResponseData> bookings) {
+    return _baseFilters;
+  }
 
+  List<BookingListResponseData> _applyFilters(
+    List<BookingListResponseData> bookings,
+  ) {
+    final query = _searchController.text.trim().toLowerCase();
+
+    return bookings.where((item) {
+      final title = item.activity?.title?.toLowerCase() ?? '';
+      final location = item.activity?.location?.toLowerCase() ?? '';
+      final status = _resolveStatus(item)?.toLowerCase() ?? '';
+      final dateLabel = item.bookingDate != null
+          ? DateFormat('dd MMM yyyy').format(item.bookingDate!).toLowerCase()
+          : '';
+
+      final matchesSearch =
+          query.isEmpty ||
+          title.contains(query) ||
+          location.contains(query) ||
+          status.contains(query) ||
+          dateLabel.contains(query);
+
+      final activeFilter = _activeFilter.toLowerCase();
+      final matchesFilter =
+          activeFilter == 'all' ||
+          title.contains(activeFilter) ||
+          location.contains(activeFilter);
+
+      return matchesSearch && matchesFilter;
+    }).toList();
+  }
+
+  String _formatCompactRupiah(int value) {
+    if (value <= 0) {
+      return 'Rp 0';
+    }
+
+    if (value >= 1000) {
+      final compact = value % 1000 == 0
+          ? '${value ~/ 1000}k'
+          : '${(value / 1000).toStringAsFixed(1)}k';
+      return 'Rp $compact';
+    }
+
+    return 'Rp $value';
+  }
+
+  Widget _buildImage(String? imageUrl) {
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return Image.network(
+        imageUrl,
+        width: 132,
+        height: 94,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _buildImageFallback(),
+      );
+    }
+
+    return _buildImageFallback();
+  }
+
+  Widget _buildImageFallback() {
+    return Container(
+      width: 132,
+      height: 94,
+      color: JalanYukColors.surface,
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.image_not_supported_outlined,
+        color: JalanYukColors.hint,
+      ),
+    );
+  }
+
+  String? _resolveStatus(BookingListResponseData item) {
+    final bookingStatus = item.bookingStatus?.trim();
+    if (bookingStatus != null && bookingStatus.isNotEmpty) {
+      return bookingStatus;
+    }
+
+    final paymentStatus = item.paymentStatus?.toString().trim();
+    if (paymentStatus == null || paymentStatus.isEmpty) {
+      return null;
+    }
+
+    return paymentStatus;
+  }
+
+  Widget _buildStatusBadge(String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(8),
+        color: _statusColor(label).withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        status,
+        label,
         style: TextStyle(
-          color: textColor,
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          height: 1,
+          color: _statusColor(label),
         ),
       ),
     );
+  }
+
+  Color _statusColor(String label) {
+    switch (label.toLowerCase()) {
+      case 'paid':
+      case 'confirmed':
+        return const Color(0xFF16A34A);
+      case 'pending':
+      case 'waiting_payment':
+        return const Color(0xFFD97706);
+      case 'cancelled':
+        return const Color(0xFFDC2626);
+      default:
+        return JalanYukColors.textSecondary;
+    }
   }
 }

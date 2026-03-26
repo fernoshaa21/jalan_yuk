@@ -58,7 +58,10 @@ final router = GoRouter(
             GoRoute(
               path: '/dashboard/bookings',
               name: 'dashboard_bookings',
-              builder: (context, state) => const BookingsView(),
+              builder: (context, state) => BlocProvider<BookingsCubit>(
+                create: (_) => di<BookingsCubit>(),
+                child: const BookingsView(),
+              ),
             ),
           ],
         ),
@@ -99,8 +102,14 @@ final router = GoRouter(
       name: 'activity_detail',
       builder: (context, state) {
         final id = state.pathParameters['id'] ?? '';
-        return BlocProvider<DetailActivitiesCubit>(
-          create: (_) => di<DetailActivitiesCubit>()..loadDetailActivities(id),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<DetailActivitiesCubit>(
+              create: (_) =>
+                  di<DetailActivitiesCubit>()..loadDetailActivities(id),
+            ),
+            BlocProvider<BookingCubit>(create: (_) => di<BookingCubit>()),
+          ],
           child: ActivityDetailView(activityId: id),
         );
       },
@@ -108,7 +117,8 @@ final router = GoRouter(
     GoRoute(
       path: '/booking_detail',
       name: 'booking_detail',
-      builder: (context, state) => const DetailBookingView(),
+      builder: (context, state) =>
+          DetailBookingView(bookingId: state.pathParameters['bookingId']),
     ),
     GoRoute(
       path: '/booking',

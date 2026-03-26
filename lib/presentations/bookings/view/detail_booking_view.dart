@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:jalan_yuk/core/core.dart';
 
-class DetailBookingView extends StatelessWidget {
-  const DetailBookingView({super.key});
+class DetailBookingView extends StatefulWidget {
+  String? bookingId;
+  DetailBookingView({super.key, this.bookingId});
 
+  @override
+  State<DetailBookingView> createState() => _DetailBookingViewState();
+}
+
+class _DetailBookingViewState extends State<DetailBookingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

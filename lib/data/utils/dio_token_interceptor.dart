@@ -1,50 +1,42 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:jalan_yuk/presentations/auth/cubit/auth_cubit.dart';
 
-// import 'package:flutter_news_app/config/flavor_config.dart';
+import 'dev_log.dart';
 
-class DioTokenInterceptor implements InterceptorsWrapper {
-  // final AuthCubit authCubit;
+class DioTokenInterceptor extends Interceptor {
   final AuthCubit Function() getAuthCubit;
-  final BuildContext? context;
 
-  DioTokenInterceptor(this.getAuthCubit, this.context);
+  DioTokenInterceptor(this.getAuthCubit);
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (err.response?.statusCode == HttpStatus.unauthorized) {
-      // getAuthCubit().resetUser();
+      devLog(
+        'DioTokenInterceptor unauthorized ${err.requestOptions.method} '
+        '${err.requestOptions.path}',
+      );
     }
     return handler.next(err);
   }
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // var currentUser = getAuthCubit().state.user;
-    // var loginData = {
+    final token = getAuthCubit().state.user?.data?.accessToken?.trim();
+    final hasToken = token != null && token.isNotEmpty;
+    final shouldAttachAuthorization =
+        !_isAuthExemptPath(options.path) &&
+        options.headers['Authorization'] == null;
 
-    //   'version': AppConfig.package.version,
-    //   'buildNumber': AppConfig.package.buildNumber,
-    // }.map((key, value) => MapEntry(key, value.toString()));
-    // if (options.method == 'POST') {
-    //   if (options.data is FormData) {
-    //     (options.data as FormData).fields.addAll(loginData.entries);
-    //   }
-    // } else {
-    //   options.queryParameters.addAll(loginData);
-    // }
-    // if (currentUser?.token != null) {
-    //   options.headers['Authorization'] = 'Bearer ${currentUser?.token}';
-    // }
+    if (shouldAttachAuthorization && hasToken) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
 
-    /// xxx url encode if post
     if (options.method == 'POST' || options.method == 'PUT') {
       if (options.data is FormData) {
         options.headers['Content-Type'] = 'multipart/form-data';
       } else if (options.data is Map || options.data is String) {
-        // For JSON data, use application/json
         options.headers['Content-Type'] = 'application/json';
       }
     }
@@ -70,6 +62,14 @@ class DioTokenInterceptor implements InterceptorsWrapper {
         (element) => element.key == 'dio.user_id',
       );
     }
+
+    if (shouldAttachAuthorization) {
+      devLog(
+        'DioTokenInterceptor ${options.method} ${options.path} '
+        'authorization=${hasToken ? "attached(${_maskToken(token)})" : "skipped(no-token)"}',
+      );
+    }
+
     return handler.next(options);
   }
 
@@ -81,4 +81,20 @@ class DioTokenInterceptor implements InterceptorsWrapper {
 
 Map get useUserId {
   return {'dio.user_id': true};
+}
+
+bool _isAuthExemptPath(String path) {
+  return path.startsWith('/auth/login') || path.startsWith('/auth/register');
+}
+
+String _maskToken(String token) {
+  if (token.length < 2) {
+    return '***';
+  }
+
+  if (token.length <= 8) {
+    return '${token.substring(0, 2)}***';
+  }
+
+  return '${token.substring(0, 4)}...${token.substring(token.length - 4)}';
 }

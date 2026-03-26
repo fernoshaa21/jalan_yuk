@@ -6,18 +6,16 @@ import 'package:get_it/get_it.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jalan_yuk/config.dart';
-import 'package:jalan_yuk/data/utils/dio_token_interceptor.dart';
-import 'package:jalan_yuk/domain/usecases/auth/register_usecase.dart';
 import 'package:jalan_yuk/presentations/auth/cubit/auth_cubit.dart';
+import 'package:jalan_yuk/presentations/bookings/cubit/booking_cubit.dart';
+import 'package:jalan_yuk/presentations/bookings/cubit/bookings_cubit.dart';
 import 'package:jalan_yuk/presentations/explore/cubit/explore_cubit.dart';
 import 'package:jalan_yuk/presentations/home/cubit/detail_activities_cubit.dart';
 import 'package:jalan_yuk/presentations/home/cubit/home_cubit.dart';
 
 import '../core/network/network.dart';
 import '../data/data.dart';
-import '../data/datasources/datasources.dart';
 import '../domain/domain.dart';
-import '../router/router.dart';
 
 final di = GetIt.I;
 
@@ -36,6 +34,7 @@ Future<void> setupInjection() async {
 void _datasources() {
   di.registerSingleton<AuthApi>(AuthApiImpl(di()));
   di.registerSingleton<ActivitiesApi>(ActivitiesApiImpl(di()));
+  di.registerSingleton<BookingsApi>(BookingsApiImpl(di()));
 }
 
 void _repositories() {
@@ -44,6 +43,7 @@ void _repositories() {
   di.registerSingleton<ActivitiesRepository>(
     ActivitiesRepositoryImpl(di(), di()),
   );
+  di.registerSingleton<BookingsRepository>(BookingsRepositoryImpl(di(), di()));
 }
 
 void _useCases() {
@@ -59,6 +59,8 @@ void _useCases() {
   di.registerSingleton<GetDetailActivitiesUseCase>(
     GetDetailActivitiesUseCase(di()),
   );
+  di.registerSingleton<CreateBookingUseCase>(CreateBookingUseCase(di()));
+  di.registerSingleton<GetMyBookingsUseCase>(GetMyBookingsUseCase(di()));
 }
 
 void _cubits() {
@@ -67,6 +69,8 @@ void _cubits() {
   di.registerLazySingleton(() => HomeCubit(di(), di()));
   di.registerFactory(() => ExploreCubit(di(), di()));
   di.registerFactory(() => DetailActivitiesCubit(di()));
+  di.registerFactory(() => BookingCubit(di()));
+  di.registerFactory(() => BookingsCubit(di()));
 }
 
 void _utils() {
@@ -84,9 +88,7 @@ void _utils() {
   di.registerLazySingleton(() {
     final dio = Dio();
     dio.options.baseUrl = AppConfig.baseUrl;
-    dio.interceptors.add(
-      DioTokenInterceptor(() => di(), rootNavigatorKey.currentContext),
-    );
+    dio.interceptors.add(DioTokenInterceptor(() => di()));
     dio.interceptors.add(LogInterceptor());
     return dio;
   });

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:jalan_yuk/core/core.dart';
 
 import '../../../domain/entities/activities/activities.dart';
+import '../../../domain/entities/bookings/bookings.dart';
+import '../../bookings/cubit/booking_cubit.dart';
+import '../../bookings/cubit/booking_state.dart';
 import '../cubit/detail_activities_cubit.dart';
 import '../cubit/detail_activities_state.dart';
 
@@ -18,6 +21,7 @@ class ActivityDetailView extends StatefulWidget {
 
 class _ActivityDetailViewState extends State<ActivityDetailView> {
   int _quantity = 1;
+  DateTime? _selectedBookingDate;
 
   int get _totalPrice {
     final unitPrice = _parsePriceToInt(
@@ -38,14 +42,36 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DetailActivitiesCubit, DetailActivitiesState>(
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: const JalanYukAppBar(title: 'Activity Detail'),
-          body: SafeArea(top: false, child: _buildBody(state)),
-        );
+    return BlocListener<BookingCubit, BookingState>(
+      listener: (context, state) {
+        if (state.isError && (state.errorMessage?.isNotEmpty ?? false)) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        }
+
+        if (state.isSuccess) {
+          final message = state.response?.message?.trim();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                message != null && message.isNotEmpty
+                    ? message
+                    : 'Booking created successfully',
+              ),
+            ),
+          );
+        }
       },
+      child: BlocBuilder<DetailActivitiesCubit, DetailActivitiesState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: const JalanYukAppBar(title: 'Activity Detail'),
+            body: SafeArea(top: false, child: _buildBody(state)),
+          );
+        },
+      ),
     );
   }
 
@@ -77,6 +103,7 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
     }
 
     final activity = state.activity!;
+    _ensureSelectedBookingDate(activity);
 
     return SingleChildScrollView(
       child: Padding(
@@ -93,11 +120,100 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
             _buildDescriptionSection(activity),
             const SizedBox(height: 22),
             _buildPriceAndStepper(activity),
+            const SizedBox(height: 18),
+            _buildBookingDateSelector(activity),
             const SizedBox(height: 24),
             _buildBookButton(context),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBookingDateSelector(DetailActivitiesData activity) {
+    final availableDates = activity.availableDates ?? const <DateTime>[];
+
+    if (availableDates.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF9FAFB),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE5E7EB)),
+        ),
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Booking Date',
+              style: TextStyle(
+                fontSize: 12,
+                color: Color(0xFF6B7280),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 6),
+            Text(
+              'No booking date available for this activity yet.',
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF374151),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Booking Date',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF111827),
+          ),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<DateTime>(
+          initialValue: _selectedBookingDate,
+          items: availableDates
+              .map(
+                (date) => DropdownMenuItem<DateTime>(
+                  value: date,
+                  child: Text(_displayDateFormatter.format(date)),
+                ),
+              )
+              .toList(),
+          onChanged: (value) {
+            setState(() => _selectedBookingDate = value);
+          },
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 14,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: JalanYukColors.emerald),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -251,21 +367,81 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
   }
 
   Widget _buildBookButton(BuildContext context) {
-    return JalanYukButton(
-      label: 'Book Now',
-      height: 54,
-      onPressed: () {
-        context.pushNamed('booking');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Booking flow will be connected soon')),
+    return BlocBuilder<BookingCubit, BookingState>(
+      builder: (context, bookingState) {
+        return JalanYukButton(
+          label: 'Book Now',
+          height: 54,
+          isLoading: bookingState.isLoading,
+          onPressed: bookingState.isLoading ? null : _submitBooking,
         );
       },
     );
   }
 
+  void _submitBooking() {
+    final detailState = context.read<DetailActivitiesCubit>().state;
+    final activity = detailState.activity;
+    final activityId = activity?.id ?? int.tryParse(widget.activityId) ?? 0;
+    final bookingDate = _selectedBookingDate;
+
+    if (activityId <= 0) {
+      _showMessage('Activity is not valid');
+      return;
+    }
+    if (_quantity <= 0) {
+      _showMessage('Quantity must be greater than zero');
+      return;
+    }
+    if (bookingDate == null) {
+      _showMessage('Please select a booking date');
+      return;
+    }
+
+    context.read<BookingCubit>().createBooking(
+      CreateBookingRequest(
+        activityId: activityId,
+        bookingDate: _requestDateFormatter.format(bookingDate),
+        qty: _quantity,
+      ),
+    );
+  }
+
+  void _ensureSelectedBookingDate(DetailActivitiesData activity) {
+    final availableDates = activity.availableDates ?? const <DateTime>[];
+    if (availableDates.isEmpty) {
+      _selectedBookingDate = null;
+      return;
+    }
+
+    final selected = _selectedBookingDate;
+    if (selected == null ||
+        !availableDates.any((date) => _isSameDate(date, selected))) {
+      _selectedBookingDate = availableDates.first;
+    }
+  }
+
+  bool _isSameDate(DateTime first, DateTime second) {
+    return first.year == second.year &&
+        first.month == second.month &&
+        first.day == second.day;
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  DateFormat get _displayDateFormatter => DateFormat('dd MMM yyyy');
+  DateFormat get _requestDateFormatter => DateFormat('yyyy-MM-dd');
+
   String _formatRupiah(int value) {
-    final ribuan = value ~/ 1000;
-    return 'Rp ${ribuan}k';
+    return NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    ).format(value);
   }
 
   int _parsePriceToInt(String? raw) {

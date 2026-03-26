@@ -52,7 +52,7 @@ $Res call({
 });
 
 
-
+$LocalUserCopyWith<$Res>? get user;
 
 }
 /// @nodoc
@@ -73,7 +73,19 @@ as LocalUser?,errorMessage: freezed == errorMessage ? _self.errorMessage : error
 as String?,
   ));
 }
+/// Create a copy of AuthState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$LocalUserCopyWith<$Res>? get user {
+    if (_self.user == null) {
+    return null;
+  }
 
+  return $LocalUserCopyWith<$Res>(_self.user!, (value) {
+    return _then(_self.copyWith(user: value));
+  });
+}
 }
 
 
@@ -255,7 +267,7 @@ $Res call({
 });
 
 
-
+@override $LocalUserCopyWith<$Res>? get user;
 
 }
 /// @nodoc
@@ -277,7 +289,19 @@ as String?,
   ));
 }
 
+/// Create a copy of AuthState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$LocalUserCopyWith<$Res>? get user {
+    if (_self.user == null) {
+    return null;
+  }
 
+  return $LocalUserCopyWith<$Res>(_self.user!, (value) {
+    return _then(_self.copyWith(user: value));
+  });
+}
 }
 
 // dart format on

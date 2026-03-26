@@ -24,7 +24,7 @@ class AuthApiImpl implements AuthApi {
       data: {'email': email, 'password': password},
     );
     return ApiResponse.fromResponse(response, (json) {
-      return LocalUser.fromJson(json['data']);
+      return LocalUser.fromJson(json);
     });
   }
 
