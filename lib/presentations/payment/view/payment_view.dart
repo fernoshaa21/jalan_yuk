@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jalan_yuk/core/core.dart';
+import 'package:jalan_yuk/di/di.dart';
+import 'package:jalan_yuk/presentations/bookings/cubit/bookings_cubit.dart';
+import 'package:jalan_yuk/presentations/payment/cubit/payment_cubit.dart';
+import 'package:jalan_yuk/presentations/payment/cubit/payment_state.dart';
 
 class BookingPaymentArgs {
   const BookingPaymentArgs({
+    required this.bookingId,
     required this.activityTitle,
     required this.bookingDate,
     required this.guestCount,
     required this.totalPrice,
   });
 
+  final String bookingId;
   final String activityTitle;
   final String bookingDate;
   final String guestCount;
   final String totalPrice;
 }
 
-enum PaymentMethod { bankTransfer, cash, mockPayment }
+enum PaymentMethod { bankTransfer, gopay, ovo, cash }
 
 class PaymentView extends StatefulWidget {
   const PaymentView({super.key, this.bookingArgs});
@@ -31,39 +39,67 @@ class _PaymentViewState extends State<PaymentView> {
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        widget.bookingArgs ??
-        const BookingPaymentArgs(
-          activityTitle: 'Batur Sunrise Jeep',
-          bookingDate: '19 March 2026',
-          guestCount: '2 Guests',
-          totalPrice: 'Rp 855k',
-        );
+    final args = widget.bookingArgs;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const JalanYukAppBar(title: 'Payment'),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildBookingSummaryCard(args),
-                const SizedBox(height: 18),
-                const JalanYukSectionTitle(title: 'Total'),
-                const SizedBox(height: 10),
-                _buildTotalCard(args.totalPrice),
-                const SizedBox(height: 18),
-                _buildPaymentMethodSection(),
-                const SizedBox(height: 24),
-                _buildPayNowButton(),
-              ],
+    return BlocListener<PaymentCubit, PaymentState>(
+      listenWhen: (previous, current) => previous.payStatus != current.payStatus,
+      listener: (context, state) {
+        if (state.isPaySuccess) {
+          di<BookingsCubit>().loadMyBookings();
+          final message = state.payResponse?.message?.trim();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                message != null && message.isNotEmpty
+                    ? message
+                    : 'Payment completed successfully',
+              ),
             ),
-          ),
-        ),
+          );
+          context.pop(true);
+        }
+
+        if (state.isPayError && (state.payErrorMessage?.isNotEmpty ?? false)) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.payErrorMessage!)));
+        }
+      },
+      child: BlocBuilder<PaymentCubit, PaymentState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: const JalanYukAppBar(title: 'Payment'),
+            body: SafeArea(
+              top: false,
+              child: args == null
+                  ? const JalanYukStateView(
+                      type: JalanYukStateType.empty,
+                      title: 'Payment data unavailable',
+                      message: 'Booking payment information is missing.',
+                    )
+                  : SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildBookingSummaryCard(args),
+                            const SizedBox(height: 18),
+                            const JalanYukSectionTitle(title: 'Total'),
+                            const SizedBox(height: 10),
+                            _buildTotalCard(args.totalPrice),
+                            const SizedBox(height: 18),
+                            _buildPaymentMethodSection(),
+                            const SizedBox(height: 24),
+                            _buildPayNowButton(args, state),
+                          ],
+                        ),
+                      ),
+                    ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -177,12 +213,11 @@ class _PaymentViewState extends State<PaymentView> {
                 value: PaymentMethod.bankTransfer,
               ),
               const Divider(color: JalanYukColors.border, height: 1),
-              _buildPaymentMethodTile(label: 'Cash', value: PaymentMethod.cash),
+              _buildPaymentMethodTile(label: 'GoPay', value: PaymentMethod.gopay),
               const Divider(color: JalanYukColors.border, height: 1),
-              _buildPaymentMethodTile(
-                label: 'Mock Payment',
-                value: PaymentMethod.mockPayment,
-              ),
+              _buildPaymentMethodTile(label: 'OVO', value: PaymentMethod.ovo),
+              const Divider(color: JalanYukColors.border, height: 1),
+              _buildPaymentMethodTile(label: 'Cash', value: PaymentMethod.cash),
             ],
           ),
         ),
@@ -244,8 +279,18 @@ class _PaymentViewState extends State<PaymentView> {
     );
   }
 
-  Widget _buildPayNowButton() {
-    return JalanYukButton(label: 'Pay Now', height: 54, onPressed: () {});
+  Widget _buildPayNowButton(BookingPaymentArgs args, PaymentState state) {
+    return JalanYukButton(
+      label: 'Pay Now',
+      height: 54,
+      isLoading: state.isPayLoading,
+      onPressed: state.isPayLoading
+          ? null
+          : () => context.read<PaymentCubit>().payBooking(
+                bookingId: args.bookingId,
+                method: _selectedMethod.apiValue,
+              ),
+    );
   }
 
   Widget _buildSurfaceCard({
@@ -289,4 +334,13 @@ class _DotSeparator extends StatelessWidget {
       ),
     );
   }
+}
+
+extension on PaymentMethod {
+  String get apiValue => switch (this) {
+    PaymentMethod.bankTransfer => 'bank_transfer',
+    PaymentMethod.gopay => 'gopay',
+    PaymentMethod.ovo => 'ovo',
+    PaymentMethod.cash => 'cash',
+  };
 }

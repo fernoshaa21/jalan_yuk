@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:jalan_yuk/core/core.dart';
+import 'package:jalan_yuk/di/di.dart';
 
 import '../../../domain/entities/activities/activities.dart';
 import '../../../domain/entities/bookings/bookings.dart';
 import '../../bookings/cubit/booking_cubit.dart';
+import '../../bookings/cubit/bookings_cubit.dart';
 import '../../bookings/cubit/booking_state.dart';
 import '../cubit/detail_activities_cubit.dart';
 import '../cubit/detail_activities_state.dart';
@@ -51,6 +53,7 @@ class _ActivityDetailViewState extends State<ActivityDetailView> {
         }
 
         if (state.isSuccess) {
+          di<BookingsCubit>().loadMyBookings();
           final message = state.response?.message?.trim();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

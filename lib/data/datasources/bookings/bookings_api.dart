@@ -1,13 +1,11 @@
 import 'package:dio/dio.dart';
-
-import '../../../config.dart';
-import '../../../core/utilities/activity_image_resolver.dart';
-import '../../../domain/entities/bookings/bookings.dart';
-import '../../../domain/entities/bookings/bookings_list_response.dart';
+import 'package:jalan_yuk/lib.dart';
 
 abstract class BookingsApi {
   Future<BookingsResponse> createBooking(CreateBookingRequest request);
   Future<BookingListResponse> getMyBookings();
+  Future<BookingDetailResponse> getBookingDetail(String id);
+  Future<CancelBookingResponse> cancelBooking(String id);
 }
 
 class BookingsApiImpl implements BookingsApi {
@@ -37,6 +35,30 @@ class BookingsApiImpl implements BookingsApi {
     }
 
     return BookingListResponse.fromJson(_normalizeListPayload(raw));
+  }
+
+  @override
+  Future<BookingDetailResponse> getBookingDetail(String id) async {
+    final response = await _dio.get('/bookings/$id');
+
+    final raw = response.data;
+    if (raw is! Map<String, dynamic>) {
+      throw Exception('Invalid /bookings/$id response format');
+    }
+
+    return BookingDetailResponse.fromJson(_normalizeDetailPayload(raw));
+  }
+
+  @override
+  Future<CancelBookingResponse> cancelBooking(String id) async {
+    final response = await _dio.patch('/bookings/$id/cancel');
+
+    final raw = response.data;
+    if (raw is! Map<String, dynamic>) {
+      throw Exception('Invalid /bookings/$id/cancel response format');
+    }
+
+    return CancelBookingResponse.fromJson(Map<String, dynamic>.from(raw));
   }
 
   Map<String, dynamic> _normalizePayload(Map<String, dynamic> raw) {
@@ -71,6 +93,24 @@ class BookingsApiImpl implements BookingsApi {
         }
         return item;
       }).toList();
+    }
+
+    return normalized;
+  }
+
+  Map<String, dynamic> _normalizeDetailPayload(Map<String, dynamic> raw) {
+    final normalized = Map<String, dynamic>.from(raw);
+    final data = normalized['data'];
+
+    if (data is Map<String, dynamic>) {
+      normalized['data'] = _normalizeBookingData(data);
+      return normalized;
+    }
+
+    if (data is Map) {
+      normalized['data'] = _normalizeBookingData(
+        Map<String, dynamic>.from(data),
+      );
     }
 
     return normalized;

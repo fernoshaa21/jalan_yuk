@@ -1,10 +1,8 @@
 import 'package:dartz/dartz.dart';
-
-import '../../../core/core.dart';
-import '../../../domain/entities/bookings/bookings.dart';
-import '../../../domain/entities/bookings/bookings_list_response.dart';
-import '../../../domain/repositories/bookings/bookings_repository.dart';
-import '../../datasources/bookings/bookings_api.dart';
+import 'package:jalan_yuk/core/core.dart';
+import 'package:jalan_yuk/data/datasources/bookings/bookings_api.dart';
+import 'package:jalan_yuk/domain/entities/bookings/bookings.dart';
+import 'package:jalan_yuk/domain/repositories/bookings/bookings_repository.dart';
 
 class BookingsRepositoryImpl implements BookingsRepository {
   BookingsRepositoryImpl(this._api, this._networkInfo);
@@ -38,6 +36,38 @@ class BookingsRepositoryImpl implements BookingsRepository {
 
     try {
       final result = await _api.getMyBookings();
+      return Right(result);
+    } catch (e) {
+      return Left(Failure.parseFromException(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, BookingDetailResponse>> getBookingDetail(
+    String id,
+  ) async {
+    final isConnected = await _networkInfo.isConnected;
+    if (!isConnected) {
+      return Left(Failure.noConnection());
+    }
+
+    try {
+      final result = await _api.getBookingDetail(id);
+      return Right(result);
+    } catch (e) {
+      return Left(Failure.parseFromException(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CancelBookingResponse>> cancelBooking(String id) async {
+    final isConnected = await _networkInfo.isConnected;
+    if (!isConnected) {
+      return Left(Failure.noConnection());
+    }
+
+    try {
+      final result = await _api.cancelBooking(id);
       return Right(result);
     } catch (e) {
       return Left(Failure.parseFromException(e));

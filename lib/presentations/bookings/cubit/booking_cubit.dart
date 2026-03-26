@@ -1,8 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../domain/entities/bookings/bookings.dart';
-import '../../../domain/usecases/bookings/create_booking_usecase.dart';
-import 'booking_state.dart';
+import 'package:jalan_yuk/domain/entities/bookings/bookings.dart';
+import 'package:jalan_yuk/domain/usecases/bookings/create_booking_usecase.dart';
+import 'package:jalan_yuk/presentations/bookings/cubit/booking_state.dart';
 
 class BookingCubit extends Cubit<BookingState> {
   BookingCubit(this._createBookingUseCase) : super(const BookingState());

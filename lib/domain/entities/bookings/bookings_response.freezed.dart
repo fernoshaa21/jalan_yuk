@@ -308,7 +308,7 @@ $BookingsReponseDataCopyWith<$Res>? get data {
 /// @nodoc
 mixin _$BookingsReponseData {
 
- String? get id; Activity? get activity; DateTime? get bookingDate; int? get qty; int? get unitPrice; int? get totalPrice; String? get status; DateTime? get createdAt;
+ String? get id; ActivityBookingResponse? get activity; DateTime? get bookingDate; int? get qty; int? get unitPrice; int? get totalPrice; String? get status; DateTime? get createdAt;
 /// Create a copy of BookingsReponseData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -341,11 +341,11 @@ abstract mixin class $BookingsReponseDataCopyWith<$Res>  {
   factory $BookingsReponseDataCopyWith(BookingsReponseData value, $Res Function(BookingsReponseData) _then) = _$BookingsReponseDataCopyWithImpl;
 @useResult
 $Res call({
- String? id, Activity? activity, DateTime? bookingDate, int? qty, int? unitPrice, int? totalPrice, String? status, DateTime? createdAt
+ String? id, ActivityBookingResponse? activity, DateTime? bookingDate, int? qty, int? unitPrice, int? totalPrice, String? status, DateTime? createdAt
 });
 
 
-$ActivityCopyWith<$Res>? get activity;
+$ActivityBookingResponseCopyWith<$Res>? get activity;
 
 }
 /// @nodoc
@@ -362,7 +362,7 @@ class _$BookingsReponseDataCopyWithImpl<$Res>
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,activity: freezed == activity ? _self.activity : activity // ignore: cast_nullable_to_non_nullable
-as Activity?,bookingDate: freezed == bookingDate ? _self.bookingDate : bookingDate // ignore: cast_nullable_to_non_nullable
+as ActivityBookingResponse?,bookingDate: freezed == bookingDate ? _self.bookingDate : bookingDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,qty: freezed == qty ? _self.qty : qty // ignore: cast_nullable_to_non_nullable
 as int?,unitPrice: freezed == unitPrice ? _self.unitPrice : unitPrice // ignore: cast_nullable_to_non_nullable
 as int?,totalPrice: freezed == totalPrice ? _self.totalPrice : totalPrice // ignore: cast_nullable_to_non_nullable
@@ -375,12 +375,12 @@ as DateTime?,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ActivityCopyWith<$Res>? get activity {
+$ActivityBookingResponseCopyWith<$Res>? get activity {
     if (_self.activity == null) {
     return null;
   }
 
-  return $ActivityCopyWith<$Res>(_self.activity!, (value) {
+  return $ActivityBookingResponseCopyWith<$Res>(_self.activity!, (value) {
     return _then(_self.copyWith(activity: value));
   });
 }
@@ -465,7 +465,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  Activity? activity,  DateTime? bookingDate,  int? qty,  int? unitPrice,  int? totalPrice,  String? status,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  ActivityBookingResponse? activity,  DateTime? bookingDate,  int? qty,  int? unitPrice,  int? totalPrice,  String? status,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BookingsReponseData() when $default != null:
 return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.unitPrice,_that.totalPrice,_that.status,_that.createdAt);case _:
@@ -486,7 +486,7 @@ return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.unitPr
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  Activity? activity,  DateTime? bookingDate,  int? qty,  int? unitPrice,  int? totalPrice,  String? status,  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  ActivityBookingResponse? activity,  DateTime? bookingDate,  int? qty,  int? unitPrice,  int? totalPrice,  String? status,  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _BookingsReponseData():
 return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.unitPrice,_that.totalPrice,_that.status,_that.createdAt);case _:
@@ -506,7 +506,7 @@ return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.unitPr
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  Activity? activity,  DateTime? bookingDate,  int? qty,  int? unitPrice,  int? totalPrice,  String? status,  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  ActivityBookingResponse? activity,  DateTime? bookingDate,  int? qty,  int? unitPrice,  int? totalPrice,  String? status,  DateTime? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _BookingsReponseData() when $default != null:
 return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.unitPrice,_that.totalPrice,_that.status,_that.createdAt);case _:
@@ -525,7 +525,7 @@ class _BookingsReponseData implements BookingsReponseData {
   factory _BookingsReponseData.fromJson(Map<String, dynamic> json) => _$BookingsReponseDataFromJson(json);
 
 @override final  String? id;
-@override final  Activity? activity;
+@override final  ActivityBookingResponse? activity;
 @override final  DateTime? bookingDate;
 @override final  int? qty;
 @override final  int? unitPrice;
@@ -566,11 +566,11 @@ abstract mixin class _$BookingsReponseDataCopyWith<$Res> implements $BookingsRep
   factory _$BookingsReponseDataCopyWith(_BookingsReponseData value, $Res Function(_BookingsReponseData) _then) = __$BookingsReponseDataCopyWithImpl;
 @override @useResult
 $Res call({
- String? id, Activity? activity, DateTime? bookingDate, int? qty, int? unitPrice, int? totalPrice, String? status, DateTime? createdAt
+ String? id, ActivityBookingResponse? activity, DateTime? bookingDate, int? qty, int? unitPrice, int? totalPrice, String? status, DateTime? createdAt
 });
 
 
-@override $ActivityCopyWith<$Res>? get activity;
+@override $ActivityBookingResponseCopyWith<$Res>? get activity;
 
 }
 /// @nodoc
@@ -587,7 +587,7 @@ class __$BookingsReponseDataCopyWithImpl<$Res>
   return _then(_BookingsReponseData(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,activity: freezed == activity ? _self.activity : activity // ignore: cast_nullable_to_non_nullable
-as Activity?,bookingDate: freezed == bookingDate ? _self.bookingDate : bookingDate // ignore: cast_nullable_to_non_nullable
+as ActivityBookingResponse?,bookingDate: freezed == bookingDate ? _self.bookingDate : bookingDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,qty: freezed == qty ? _self.qty : qty // ignore: cast_nullable_to_non_nullable
 as int?,unitPrice: freezed == unitPrice ? _self.unitPrice : unitPrice // ignore: cast_nullable_to_non_nullable
 as int?,totalPrice: freezed == totalPrice ? _self.totalPrice : totalPrice // ignore: cast_nullable_to_non_nullable
@@ -601,12 +601,12 @@ as DateTime?,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ActivityCopyWith<$Res>? get activity {
+$ActivityBookingResponseCopyWith<$Res>? get activity {
     if (_self.activity == null) {
     return null;
   }
 
-  return $ActivityCopyWith<$Res>(_self.activity!, (value) {
+  return $ActivityBookingResponseCopyWith<$Res>(_self.activity!, (value) {
     return _then(_self.copyWith(activity: value));
   });
 }
@@ -614,22 +614,22 @@ $ActivityCopyWith<$Res>? get activity {
 
 
 /// @nodoc
-mixin _$Activity {
+mixin _$ActivityBookingResponse {
 
  int? get id; String? get title; String? get imageUrl; String? get location;
-/// Create a copy of Activity
+/// Create a copy of ActivityBookingResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$ActivityCopyWith<Activity> get copyWith => _$ActivityCopyWithImpl<Activity>(this as Activity, _$identity);
+$ActivityBookingResponseCopyWith<ActivityBookingResponse> get copyWith => _$ActivityBookingResponseCopyWithImpl<ActivityBookingResponse>(this as ActivityBookingResponse, _$identity);
 
-  /// Serializes this Activity to a JSON map.
+  /// Serializes this ActivityBookingResponse to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Activity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.location, location) || other.location == location));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivityBookingResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.location, location) || other.location == location));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -638,15 +638,15 @@ int get hashCode => Object.hash(runtimeType,id,title,imageUrl,location);
 
 @override
 String toString() {
-  return 'Activity(id: $id, title: $title, imageUrl: $imageUrl, location: $location)';
+  return 'ActivityBookingResponse(id: $id, title: $title, imageUrl: $imageUrl, location: $location)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $ActivityCopyWith<$Res>  {
-  factory $ActivityCopyWith(Activity value, $Res Function(Activity) _then) = _$ActivityCopyWithImpl;
+abstract mixin class $ActivityBookingResponseCopyWith<$Res>  {
+  factory $ActivityBookingResponseCopyWith(ActivityBookingResponse value, $Res Function(ActivityBookingResponse) _then) = _$ActivityBookingResponseCopyWithImpl;
 @useResult
 $Res call({
  int? id, String? title, String? imageUrl, String? location
@@ -657,14 +657,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$ActivityCopyWithImpl<$Res>
-    implements $ActivityCopyWith<$Res> {
-  _$ActivityCopyWithImpl(this._self, this._then);
+class _$ActivityBookingResponseCopyWithImpl<$Res>
+    implements $ActivityBookingResponseCopyWith<$Res> {
+  _$ActivityBookingResponseCopyWithImpl(this._self, this._then);
 
-  final Activity _self;
-  final $Res Function(Activity) _then;
+  final ActivityBookingResponse _self;
+  final $Res Function(ActivityBookingResponse) _then;
 
-/// Create a copy of Activity
+/// Create a copy of ActivityBookingResponse
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? title = freezed,Object? imageUrl = freezed,Object? location = freezed,}) {
   return _then(_self.copyWith(
@@ -679,8 +679,8 @@ as String?,
 }
 
 
-/// Adds pattern-matching-related methods to [Activity].
-extension ActivityPatterns on Activity {
+/// Adds pattern-matching-related methods to [ActivityBookingResponse].
+extension ActivityBookingResponsePatterns on ActivityBookingResponse {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -693,10 +693,10 @@ extension ActivityPatterns on Activity {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Activity value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ActivityBookingResponse value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Activity() when $default != null:
+case _ActivityBookingResponse() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -715,10 +715,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Activity value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ActivityBookingResponse value)  $default,){
 final _that = this;
 switch (_that) {
-case _Activity():
+case _ActivityBookingResponse():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -736,10 +736,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Activity value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ActivityBookingResponse value)?  $default,){
 final _that = this;
 switch (_that) {
-case _Activity() when $default != null:
+case _ActivityBookingResponse() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -759,7 +759,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? id,  String? title,  String? imageUrl,  String? location)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Activity() when $default != null:
+case _ActivityBookingResponse() when $default != null:
 return $default(_that.id,_that.title,_that.imageUrl,_that.location);case _:
   return orElse();
 
@@ -780,7 +780,7 @@ return $default(_that.id,_that.title,_that.imageUrl,_that.location);case _:
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? id,  String? title,  String? imageUrl,  String? location)  $default,) {final _that = this;
 switch (_that) {
-case _Activity():
+case _ActivityBookingResponse():
 return $default(_that.id,_that.title,_that.imageUrl,_that.location);case _:
   throw StateError('Unexpected subclass');
 
@@ -800,7 +800,7 @@ return $default(_that.id,_that.title,_that.imageUrl,_that.location);case _:
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? id,  String? title,  String? imageUrl,  String? location)?  $default,) {final _that = this;
 switch (_that) {
-case _Activity() when $default != null:
+case _ActivityBookingResponse() when $default != null:
 return $default(_that.id,_that.title,_that.imageUrl,_that.location);case _:
   return null;
 
@@ -812,29 +812,29 @@ return $default(_that.id,_that.title,_that.imageUrl,_that.location);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _Activity implements Activity {
-  const _Activity({this.id, this.title, this.imageUrl, this.location});
-  factory _Activity.fromJson(Map<String, dynamic> json) => _$ActivityFromJson(json);
+class _ActivityBookingResponse implements ActivityBookingResponse {
+  const _ActivityBookingResponse({this.id, this.title, this.imageUrl, this.location});
+  factory _ActivityBookingResponse.fromJson(Map<String, dynamic> json) => _$ActivityBookingResponseFromJson(json);
 
 @override final  int? id;
 @override final  String? title;
 @override final  String? imageUrl;
 @override final  String? location;
 
-/// Create a copy of Activity
+/// Create a copy of ActivityBookingResponse
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ActivityCopyWith<_Activity> get copyWith => __$ActivityCopyWithImpl<_Activity>(this, _$identity);
+_$ActivityBookingResponseCopyWith<_ActivityBookingResponse> get copyWith => __$ActivityBookingResponseCopyWithImpl<_ActivityBookingResponse>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$ActivityToJson(this, );
+  return _$ActivityBookingResponseToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Activity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.location, location) || other.location == location));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivityBookingResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.location, location) || other.location == location));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -843,15 +843,15 @@ int get hashCode => Object.hash(runtimeType,id,title,imageUrl,location);
 
 @override
 String toString() {
-  return 'Activity(id: $id, title: $title, imageUrl: $imageUrl, location: $location)';
+  return 'ActivityBookingResponse(id: $id, title: $title, imageUrl: $imageUrl, location: $location)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$ActivityCopyWith<$Res> implements $ActivityCopyWith<$Res> {
-  factory _$ActivityCopyWith(_Activity value, $Res Function(_Activity) _then) = __$ActivityCopyWithImpl;
+abstract mixin class _$ActivityBookingResponseCopyWith<$Res> implements $ActivityBookingResponseCopyWith<$Res> {
+  factory _$ActivityBookingResponseCopyWith(_ActivityBookingResponse value, $Res Function(_ActivityBookingResponse) _then) = __$ActivityBookingResponseCopyWithImpl;
 @override @useResult
 $Res call({
  int? id, String? title, String? imageUrl, String? location
@@ -862,17 +862,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$ActivityCopyWithImpl<$Res>
-    implements _$ActivityCopyWith<$Res> {
-  __$ActivityCopyWithImpl(this._self, this._then);
+class __$ActivityBookingResponseCopyWithImpl<$Res>
+    implements _$ActivityBookingResponseCopyWith<$Res> {
+  __$ActivityBookingResponseCopyWithImpl(this._self, this._then);
 
-  final _Activity _self;
-  final $Res Function(_Activity) _then;
+  final _ActivityBookingResponse _self;
+  final $Res Function(_ActivityBookingResponse) _then;
 
-/// Create a copy of Activity
+/// Create a copy of ActivityBookingResponse
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? title = freezed,Object? imageUrl = freezed,Object? location = freezed,}) {
-  return _then(_Activity(
+  return _then(_ActivityBookingResponse(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable

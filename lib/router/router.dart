@@ -58,8 +58,8 @@ final router = GoRouter(
             GoRoute(
               path: '/dashboard/bookings',
               name: 'dashboard_bookings',
-              builder: (context, state) => BlocProvider<BookingsCubit>(
-                create: (_) => di<BookingsCubit>(),
+              builder: (context, state) => BlocProvider.value(
+                value: di<BookingsCubit>(),
                 child: const BookingsView(),
               ),
             ),
@@ -115,37 +115,45 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/booking_detail',
+      path: '/booking_detail/:bookingId',
       name: 'booking_detail',
-      builder: (context, state) =>
-          DetailBookingView(bookingId: state.pathParameters['bookingId']),
+      builder: (context, state) => MultiBlocProvider(
+        providers: [
+          BlocProvider<BookingDetailCubit>(create: (_) => di<BookingDetailCubit>()),
+          BlocProvider<PaymentCubit>(create: (_) => di<PaymentCubit>()),
+        ],
+        child: DetailBookingView(bookingId: state.pathParameters['bookingId']),
+      ),
     ),
-    GoRoute(
-      path: '/booking',
-      name: 'booking',
-      builder: (context, state) {
-        final extra = state.extra;
+    // GoRoute(
+    //   path: '/booking',
+    //   name: 'booking',
+    //   builder: (context, state) {
+    //     final extra = state.extra;
 
-        if (extra is BookingDetailExtra) {
-          return BookingView(
-            activityTitle: extra.activityTitle,
-            bookingDate: extra.bookingDate,
-            guestCount: extra.guestCount,
-            totalPrice: extra.totalPrice,
-            ticketPrice: extra.totalPrice,
-          );
-        }
+    //     if (extra is BookingDetailExtra) {
+    //       return BookingView(
+    //         activityTitle: extra.activityTitle,
+    //         bookingDate: extra.bookingDate,
+    //         guestCount: extra.guestCount,
+    //         totalPrice: extra.totalPrice,
+    //         ticketPrice: extra.totalPrice,
+    //       );
+    //     }
 
-        return const BookingView();
-      },
-    ),
+    //     return const BookingView();
+    //   },
+    // ),
     GoRoute(
       path: '/booking/payment',
       name: 'payment',
       builder: (context, state) {
         final extra = state.extra;
-        return PaymentView(
-          bookingArgs: extra is BookingPaymentArgs ? extra : null,
+        return BlocProvider<PaymentCubit>(
+          create: (_) => di<PaymentCubit>(),
+          child: PaymentView(
+            bookingArgs: extra is BookingPaymentArgs ? extra : null,
+          ),
         );
       },
     ),

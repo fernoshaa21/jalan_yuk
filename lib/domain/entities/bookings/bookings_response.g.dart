@@ -27,7 +27,9 @@ _BookingsReponseData _$BookingsReponseDataFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String?,
       activity: json['activity'] == null
           ? null
-          : Activity.fromJson(json['activity'] as Map<String, dynamic>),
+          : ActivityBookingResponse.fromJson(
+              json['activity'] as Map<String, dynamic>,
+            ),
       bookingDate: json['bookingDate'] == null
           ? null
           : DateTime.parse(json['bookingDate'] as String),
@@ -53,14 +55,18 @@ Map<String, dynamic> _$BookingsReponseDataToJson(
   'createdAt': instance.createdAt?.toIso8601String(),
 };
 
-_Activity _$ActivityFromJson(Map<String, dynamic> json) => _Activity(
+_ActivityBookingResponse _$ActivityBookingResponseFromJson(
+  Map<String, dynamic> json,
+) => _ActivityBookingResponse(
   id: (json['id'] as num?)?.toInt(),
   title: json['title'] as String?,
   imageUrl: json['imageUrl'] as String?,
   location: json['location'] as String?,
 );
 
-Map<String, dynamic> _$ActivityToJson(_Activity instance) => <String, dynamic>{
+Map<String, dynamic> _$ActivityBookingResponseToJson(
+  _ActivityBookingResponse instance,
+) => <String, dynamic>{
   'id': instance.id,
   'title': instance.title,
   'imageUrl': instance.imageUrl,

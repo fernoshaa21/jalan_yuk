@@ -30,7 +30,7 @@ abstract class BookingsResponse with _$BookingsResponse {
 abstract class BookingsReponseData with _$BookingsReponseData {
   const factory BookingsReponseData({
     String? id,
-    Activity? activity,
+    ActivityBookingResponse? activity,
     DateTime? bookingDate,
     int? qty,
     int? unitPrice,
@@ -44,14 +44,14 @@ abstract class BookingsReponseData with _$BookingsReponseData {
 }
 
 @freezed
-abstract class Activity with _$Activity {
-  const factory Activity({
+abstract class ActivityBookingResponse with _$ActivityBookingResponse {
+  const factory ActivityBookingResponse({
     int? id,
     String? title,
     String? imageUrl,
     String? location,
-  }) = _Activity;
+  }) = _ActivityBookingResponse;
 
-  factory Activity.fromJson(Map<String, dynamic> json) =>
-      _$ActivityFromJson(json);
+  factory ActivityBookingResponse.fromJson(Map<String, dynamic> json) =>
+      _$ActivityBookingResponseFromJson(json);
 }

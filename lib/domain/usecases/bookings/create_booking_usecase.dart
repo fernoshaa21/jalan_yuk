@@ -1,9 +1,8 @@
 import 'package:dartz/dartz.dart';
-
-import '../../../core/errors/failure.dart';
-import '../../../core/usecase/usecase.dart';
-import '../../entities/bookings/bookings.dart';
-import '../../repositories/bookings/bookings_repository.dart';
+import 'package:jalan_yuk/core/errors/failure.dart';
+import 'package:jalan_yuk/core/usecase/usecase.dart';
+import 'package:jalan_yuk/domain/entities/bookings/bookings.dart';
+import 'package:jalan_yuk/domain/repositories/bookings/bookings_repository.dart';
 
 class CreateBookingUseCase
     implements UseCase<BookingsResponse, CreateBookingRequest> {

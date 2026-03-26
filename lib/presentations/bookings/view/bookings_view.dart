@@ -3,10 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jalan_yuk/core/core.dart';
-
-import '../../../domain/entities/bookings/bookings_list_response.dart';
-import '../cubit/bookings_cubit.dart';
-import '../cubit/bookings_state.dart';
+import 'package:jalan_yuk/domain/entities/bookings/bookings.dart';
+import 'package:jalan_yuk/presentations/bookings/cubit/bookings_cubit.dart';
+import 'package:jalan_yuk/presentations/bookings/cubit/bookings_state.dart';
 
 class BookingDetailExtra {
   const BookingDetailExtra({
@@ -121,24 +120,27 @@ class _BookingsViewState extends State<BookingsView> {
                         padding: const EdgeInsets.only(bottom: 10),
                         child: InkWell(
                           child: _buildBookingCard(item),
-                          onTap: () {
-                            context.pushNamed(
-                              'payment',
-                              extra: BookingDetailExtra(
-                                activityTitle: item.activity?.title ?? '-',
-                                bookingDate: item.bookingDate != null
-                                    ? DateFormat(
-                                        'dd MMM yyyy',
-                                      ).format(item.bookingDate!)
-                                    : '-',
-                                guestCount:
-                                    '${item.qty ?? 0} guest${(item.qty ?? 0) == 1 ? '' : 's'}',
-                                totalPrice: _formatCompactRupiah(
-                                  item.totalPrice ?? 0,
+                          onTap: () async {
+                            final bookingId = item.id?.trim() ?? '';
+                            if (bookingId.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Booking detail is unavailable for this item.',
+                                  ),
                                 ),
-                                bookingId: item.id ?? '',
-                              ),
+                              );
+                              return;
+                            }
+
+                            await context.pushNamed(
+                              'booking_detail',
+                              pathParameters: {'bookingId': bookingId},
                             );
+                            if (!context.mounted) {
+                              return;
+                            }
+                            context.read<BookingsCubit>().loadMyBookings();
                           },
                         ),
                       ),
@@ -194,101 +196,97 @@ class _BookingsViewState extends State<BookingsView> {
     final imageUrl = item.activity?.imageUrl?.trim();
     final priceLabel = _formatCompactRupiah(item.totalPrice ?? 0);
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: () {},
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: JalanYukColors.border),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0A000000),
-              blurRadius: 8,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: _buildImage(imageUrl),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title != null && title.isNotEmpty ? title : '-',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: JalanYukColors.textPrimary,
-                            height: 1.1,
-                          ),
-                        ),
-                      ),
-                      if (status != null) ...[
-                        const SizedBox(width: 8),
-                        _buildStatusBadge(status),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          bookingDate != null
-                              ? DateFormat('dd MMM').format(bookingDate)
-                              : '-',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: JalanYukColors.textSecondary,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        priceLabel,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: JalanYukColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: _buildImage(imageUrl),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title != null && title.isNotEmpty ? title : '-',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: JalanYukColors.textPrimary,
+                          height: 1.1,
                         ),
                       ),
+                    ),
+                    if (status != null) ...[
                       const SizedBox(width: 8),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        color: JalanYukColors.textSecondary,
-                      ),
+                      _buildStatusBadge(status),
                     ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '$qty guest${qty == 1 ? '' : 's'}',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        bookingDate != null
+                            ? DateFormat('dd MMM').format(bookingDate)
+                            : '-',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: JalanYukColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      priceLabel,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: JalanYukColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(
+                      Icons.chevron_right_rounded,
                       color: JalanYukColors.textSecondary,
                     ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '$qty guest${qty == 1 ? '' : 's'}',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: JalanYukColors.textSecondary,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

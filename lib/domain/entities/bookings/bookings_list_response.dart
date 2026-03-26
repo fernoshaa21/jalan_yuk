@@ -19,7 +19,7 @@ abstract class BookingListResponse with _$BookingListResponse {
   const factory BookingListResponse({
     @JsonKey(name: "data") List<BookingListResponseData>? data,
     @JsonKey(name: "message") String? message,
-    @JsonKey(name: "meta") Meta? meta,
+    @JsonKey(name: "meta") MetaBookingList? meta,
   }) = _BookingListResponse;
 
   factory BookingListResponse.fromJson(Map<String, dynamic> json) =>
@@ -30,7 +30,7 @@ abstract class BookingListResponse with _$BookingListResponse {
 abstract class BookingListResponseData with _$BookingListResponseData {
   const factory BookingListResponseData({
     @JsonKey(name: "id") String? id,
-    @JsonKey(name: "activity") Activity? activity,
+    @JsonKey(name: "activity") ActivityBookingList? activity,
     @JsonKey(name: "bookingDate") DateTime? bookingDate,
     @JsonKey(name: "qty") int? qty,
     @JsonKey(name: "totalPrice") int? totalPrice,
@@ -44,26 +44,27 @@ abstract class BookingListResponseData with _$BookingListResponseData {
 }
 
 @freezed
-abstract class Activity with _$Activity {
-  const factory Activity({
+abstract class ActivityBookingList with _$ActivityBookingList {
+  const factory ActivityBookingList({
     @JsonKey(name: "id") int? id,
     @JsonKey(name: "title") String? title,
     @JsonKey(name: "imageUrl") String? imageUrl,
     @JsonKey(name: "location") String? location,
-  }) = _Activity;
+  }) = _ActivityBookingList;
 
-  factory Activity.fromJson(Map<String, dynamic> json) =>
-      _$ActivityFromJson(json);
+  factory ActivityBookingList.fromJson(Map<String, dynamic> json) =>
+      _$ActivityBookingListFromJson(json);
 }
 
 @freezed
-abstract class Meta with _$Meta {
-  const factory Meta({
+abstract class MetaBookingList with _$MetaBookingList {
+  const factory MetaBookingList({
     @JsonKey(name: "total") int? total,
     @JsonKey(name: "page") int? page,
     @JsonKey(name: "limit") int? limit,
     @JsonKey(name: "totalPages") int? totalPages,
-  }) = _Meta;
+  }) = _MetaBookingList;
 
-  factory Meta.fromJson(Map<String, dynamic> json) => _$MetaFromJson(json);
+  factory MetaBookingList.fromJson(Map<String, dynamic> json) =>
+      _$MetaBookingListFromJson(json);
 }

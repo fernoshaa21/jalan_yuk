@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BookingListResponse {
 
-@JsonKey(name: "data") List<BookingListResponseData>? get data;@JsonKey(name: "message") String? get message;@JsonKey(name: "meta") Meta? get meta;
+@JsonKey(name: "data") List<BookingListResponseData>? get data;@JsonKey(name: "message") String? get message;@JsonKey(name: "meta") MetaBookingList? get meta;
 /// Create a copy of BookingListResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,11 +48,11 @@ abstract mixin class $BookingListResponseCopyWith<$Res>  {
   factory $BookingListResponseCopyWith(BookingListResponse value, $Res Function(BookingListResponse) _then) = _$BookingListResponseCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "data") List<BookingListResponseData>? data,@JsonKey(name: "message") String? message,@JsonKey(name: "meta") Meta? meta
+@JsonKey(name: "data") List<BookingListResponseData>? data,@JsonKey(name: "message") String? message,@JsonKey(name: "meta") MetaBookingList? meta
 });
 
 
-$MetaCopyWith<$Res>? get meta;
+$MetaBookingListCopyWith<$Res>? get meta;
 
 }
 /// @nodoc
@@ -70,19 +70,19 @@ class _$BookingListResponseCopyWithImpl<$Res>
 data: freezed == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
 as List<BookingListResponseData>?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,meta: freezed == meta ? _self.meta : meta // ignore: cast_nullable_to_non_nullable
-as Meta?,
+as MetaBookingList?,
   ));
 }
 /// Create a copy of BookingListResponse
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$MetaCopyWith<$Res>? get meta {
+$MetaBookingListCopyWith<$Res>? get meta {
     if (_self.meta == null) {
     return null;
   }
 
-  return $MetaCopyWith<$Res>(_self.meta!, (value) {
+  return $MetaBookingListCopyWith<$Res>(_self.meta!, (value) {
     return _then(_self.copyWith(meta: value));
   });
 }
@@ -167,7 +167,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "data")  List<BookingListResponseData>? data, @JsonKey(name: "message")  String? message, @JsonKey(name: "meta")  Meta? meta)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "data")  List<BookingListResponseData>? data, @JsonKey(name: "message")  String? message, @JsonKey(name: "meta")  MetaBookingList? meta)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BookingListResponse() when $default != null:
 return $default(_that.data,_that.message,_that.meta);case _:
@@ -188,7 +188,7 @@ return $default(_that.data,_that.message,_that.meta);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "data")  List<BookingListResponseData>? data, @JsonKey(name: "message")  String? message, @JsonKey(name: "meta")  Meta? meta)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "data")  List<BookingListResponseData>? data, @JsonKey(name: "message")  String? message, @JsonKey(name: "meta")  MetaBookingList? meta)  $default,) {final _that = this;
 switch (_that) {
 case _BookingListResponse():
 return $default(_that.data,_that.message,_that.meta);case _:
@@ -208,7 +208,7 @@ return $default(_that.data,_that.message,_that.meta);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "data")  List<BookingListResponseData>? data, @JsonKey(name: "message")  String? message, @JsonKey(name: "meta")  Meta? meta)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "data")  List<BookingListResponseData>? data, @JsonKey(name: "message")  String? message, @JsonKey(name: "meta")  MetaBookingList? meta)?  $default,) {final _that = this;
 switch (_that) {
 case _BookingListResponse() when $default != null:
 return $default(_that.data,_that.message,_that.meta);case _:
@@ -236,7 +236,7 @@ class _BookingListResponse implements BookingListResponse {
 }
 
 @override@JsonKey(name: "message") final  String? message;
-@override@JsonKey(name: "meta") final  Meta? meta;
+@override@JsonKey(name: "meta") final  MetaBookingList? meta;
 
 /// Create a copy of BookingListResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -271,11 +271,11 @@ abstract mixin class _$BookingListResponseCopyWith<$Res> implements $BookingList
   factory _$BookingListResponseCopyWith(_BookingListResponse value, $Res Function(_BookingListResponse) _then) = __$BookingListResponseCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "data") List<BookingListResponseData>? data,@JsonKey(name: "message") String? message,@JsonKey(name: "meta") Meta? meta
+@JsonKey(name: "data") List<BookingListResponseData>? data,@JsonKey(name: "message") String? message,@JsonKey(name: "meta") MetaBookingList? meta
 });
 
 
-@override $MetaCopyWith<$Res>? get meta;
+@override $MetaBookingListCopyWith<$Res>? get meta;
 
 }
 /// @nodoc
@@ -293,7 +293,7 @@ class __$BookingListResponseCopyWithImpl<$Res>
 data: freezed == data ? _self._data : data // ignore: cast_nullable_to_non_nullable
 as List<BookingListResponseData>?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,meta: freezed == meta ? _self.meta : meta // ignore: cast_nullable_to_non_nullable
-as Meta?,
+as MetaBookingList?,
   ));
 }
 
@@ -301,12 +301,12 @@ as Meta?,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$MetaCopyWith<$Res>? get meta {
+$MetaBookingListCopyWith<$Res>? get meta {
     if (_self.meta == null) {
     return null;
   }
 
-  return $MetaCopyWith<$Res>(_self.meta!, (value) {
+  return $MetaBookingListCopyWith<$Res>(_self.meta!, (value) {
     return _then(_self.copyWith(meta: value));
   });
 }
@@ -316,7 +316,7 @@ $MetaCopyWith<$Res>? get meta {
 /// @nodoc
 mixin _$BookingListResponseData {
 
-@JsonKey(name: "id") String? get id;@JsonKey(name: "activity") Activity? get activity;@JsonKey(name: "bookingDate") DateTime? get bookingDate;@JsonKey(name: "qty") int? get qty;@JsonKey(name: "totalPrice") int? get totalPrice;@JsonKey(name: "bookingStatus") String? get bookingStatus;@JsonKey(name: "paymentStatus") dynamic get paymentStatus;@JsonKey(name: "createdAt") DateTime? get createdAt;
+@JsonKey(name: "id") String? get id;@JsonKey(name: "activity") ActivityBookingList? get activity;@JsonKey(name: "bookingDate") DateTime? get bookingDate;@JsonKey(name: "qty") int? get qty;@JsonKey(name: "totalPrice") int? get totalPrice;@JsonKey(name: "bookingStatus") String? get bookingStatus;@JsonKey(name: "paymentStatus") dynamic get paymentStatus;@JsonKey(name: "createdAt") DateTime? get createdAt;
 /// Create a copy of BookingListResponseData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -349,11 +349,11 @@ abstract mixin class $BookingListResponseDataCopyWith<$Res>  {
   factory $BookingListResponseDataCopyWith(BookingListResponseData value, $Res Function(BookingListResponseData) _then) = _$BookingListResponseDataCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "id") String? id,@JsonKey(name: "activity") Activity? activity,@JsonKey(name: "bookingDate") DateTime? bookingDate,@JsonKey(name: "qty") int? qty,@JsonKey(name: "totalPrice") int? totalPrice,@JsonKey(name: "bookingStatus") String? bookingStatus,@JsonKey(name: "paymentStatus") dynamic paymentStatus,@JsonKey(name: "createdAt") DateTime? createdAt
+@JsonKey(name: "id") String? id,@JsonKey(name: "activity") ActivityBookingList? activity,@JsonKey(name: "bookingDate") DateTime? bookingDate,@JsonKey(name: "qty") int? qty,@JsonKey(name: "totalPrice") int? totalPrice,@JsonKey(name: "bookingStatus") String? bookingStatus,@JsonKey(name: "paymentStatus") dynamic paymentStatus,@JsonKey(name: "createdAt") DateTime? createdAt
 });
 
 
-$ActivityCopyWith<$Res>? get activity;
+$ActivityBookingListCopyWith<$Res>? get activity;
 
 }
 /// @nodoc
@@ -370,7 +370,7 @@ class _$BookingListResponseDataCopyWithImpl<$Res>
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,activity: freezed == activity ? _self.activity : activity // ignore: cast_nullable_to_non_nullable
-as Activity?,bookingDate: freezed == bookingDate ? _self.bookingDate : bookingDate // ignore: cast_nullable_to_non_nullable
+as ActivityBookingList?,bookingDate: freezed == bookingDate ? _self.bookingDate : bookingDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,qty: freezed == qty ? _self.qty : qty // ignore: cast_nullable_to_non_nullable
 as int?,totalPrice: freezed == totalPrice ? _self.totalPrice : totalPrice // ignore: cast_nullable_to_non_nullable
 as int?,bookingStatus: freezed == bookingStatus ? _self.bookingStatus : bookingStatus // ignore: cast_nullable_to_non_nullable
@@ -383,12 +383,12 @@ as DateTime?,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ActivityCopyWith<$Res>? get activity {
+$ActivityBookingListCopyWith<$Res>? get activity {
     if (_self.activity == null) {
     return null;
   }
 
-  return $ActivityCopyWith<$Res>(_self.activity!, (value) {
+  return $ActivityBookingListCopyWith<$Res>(_self.activity!, (value) {
     return _then(_self.copyWith(activity: value));
   });
 }
@@ -473,7 +473,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  String? id, @JsonKey(name: "activity")  Activity? activity, @JsonKey(name: "bookingDate")  DateTime? bookingDate, @JsonKey(name: "qty")  int? qty, @JsonKey(name: "totalPrice")  int? totalPrice, @JsonKey(name: "bookingStatus")  String? bookingStatus, @JsonKey(name: "paymentStatus")  dynamic paymentStatus, @JsonKey(name: "createdAt")  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  String? id, @JsonKey(name: "activity")  ActivityBookingList? activity, @JsonKey(name: "bookingDate")  DateTime? bookingDate, @JsonKey(name: "qty")  int? qty, @JsonKey(name: "totalPrice")  int? totalPrice, @JsonKey(name: "bookingStatus")  String? bookingStatus, @JsonKey(name: "paymentStatus")  dynamic paymentStatus, @JsonKey(name: "createdAt")  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BookingListResponseData() when $default != null:
 return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.totalPrice,_that.bookingStatus,_that.paymentStatus,_that.createdAt);case _:
@@ -494,7 +494,7 @@ return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.totalP
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  String? id, @JsonKey(name: "activity")  Activity? activity, @JsonKey(name: "bookingDate")  DateTime? bookingDate, @JsonKey(name: "qty")  int? qty, @JsonKey(name: "totalPrice")  int? totalPrice, @JsonKey(name: "bookingStatus")  String? bookingStatus, @JsonKey(name: "paymentStatus")  dynamic paymentStatus, @JsonKey(name: "createdAt")  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  String? id, @JsonKey(name: "activity")  ActivityBookingList? activity, @JsonKey(name: "bookingDate")  DateTime? bookingDate, @JsonKey(name: "qty")  int? qty, @JsonKey(name: "totalPrice")  int? totalPrice, @JsonKey(name: "bookingStatus")  String? bookingStatus, @JsonKey(name: "paymentStatus")  dynamic paymentStatus, @JsonKey(name: "createdAt")  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _BookingListResponseData():
 return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.totalPrice,_that.bookingStatus,_that.paymentStatus,_that.createdAt);case _:
@@ -514,7 +514,7 @@ return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.totalP
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  String? id, @JsonKey(name: "activity")  Activity? activity, @JsonKey(name: "bookingDate")  DateTime? bookingDate, @JsonKey(name: "qty")  int? qty, @JsonKey(name: "totalPrice")  int? totalPrice, @JsonKey(name: "bookingStatus")  String? bookingStatus, @JsonKey(name: "paymentStatus")  dynamic paymentStatus, @JsonKey(name: "createdAt")  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  String? id, @JsonKey(name: "activity")  ActivityBookingList? activity, @JsonKey(name: "bookingDate")  DateTime? bookingDate, @JsonKey(name: "qty")  int? qty, @JsonKey(name: "totalPrice")  int? totalPrice, @JsonKey(name: "bookingStatus")  String? bookingStatus, @JsonKey(name: "paymentStatus")  dynamic paymentStatus, @JsonKey(name: "createdAt")  DateTime? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _BookingListResponseData() when $default != null:
 return $default(_that.id,_that.activity,_that.bookingDate,_that.qty,_that.totalPrice,_that.bookingStatus,_that.paymentStatus,_that.createdAt);case _:
@@ -533,7 +533,7 @@ class _BookingListResponseData implements BookingListResponseData {
   factory _BookingListResponseData.fromJson(Map<String, dynamic> json) => _$BookingListResponseDataFromJson(json);
 
 @override@JsonKey(name: "id") final  String? id;
-@override@JsonKey(name: "activity") final  Activity? activity;
+@override@JsonKey(name: "activity") final  ActivityBookingList? activity;
 @override@JsonKey(name: "bookingDate") final  DateTime? bookingDate;
 @override@JsonKey(name: "qty") final  int? qty;
 @override@JsonKey(name: "totalPrice") final  int? totalPrice;
@@ -574,11 +574,11 @@ abstract mixin class _$BookingListResponseDataCopyWith<$Res> implements $Booking
   factory _$BookingListResponseDataCopyWith(_BookingListResponseData value, $Res Function(_BookingListResponseData) _then) = __$BookingListResponseDataCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "id") String? id,@JsonKey(name: "activity") Activity? activity,@JsonKey(name: "bookingDate") DateTime? bookingDate,@JsonKey(name: "qty") int? qty,@JsonKey(name: "totalPrice") int? totalPrice,@JsonKey(name: "bookingStatus") String? bookingStatus,@JsonKey(name: "paymentStatus") dynamic paymentStatus,@JsonKey(name: "createdAt") DateTime? createdAt
+@JsonKey(name: "id") String? id,@JsonKey(name: "activity") ActivityBookingList? activity,@JsonKey(name: "bookingDate") DateTime? bookingDate,@JsonKey(name: "qty") int? qty,@JsonKey(name: "totalPrice") int? totalPrice,@JsonKey(name: "bookingStatus") String? bookingStatus,@JsonKey(name: "paymentStatus") dynamic paymentStatus,@JsonKey(name: "createdAt") DateTime? createdAt
 });
 
 
-@override $ActivityCopyWith<$Res>? get activity;
+@override $ActivityBookingListCopyWith<$Res>? get activity;
 
 }
 /// @nodoc
@@ -595,7 +595,7 @@ class __$BookingListResponseDataCopyWithImpl<$Res>
   return _then(_BookingListResponseData(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,activity: freezed == activity ? _self.activity : activity // ignore: cast_nullable_to_non_nullable
-as Activity?,bookingDate: freezed == bookingDate ? _self.bookingDate : bookingDate // ignore: cast_nullable_to_non_nullable
+as ActivityBookingList?,bookingDate: freezed == bookingDate ? _self.bookingDate : bookingDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,qty: freezed == qty ? _self.qty : qty // ignore: cast_nullable_to_non_nullable
 as int?,totalPrice: freezed == totalPrice ? _self.totalPrice : totalPrice // ignore: cast_nullable_to_non_nullable
 as int?,bookingStatus: freezed == bookingStatus ? _self.bookingStatus : bookingStatus // ignore: cast_nullable_to_non_nullable
@@ -609,12 +609,12 @@ as DateTime?,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ActivityCopyWith<$Res>? get activity {
+$ActivityBookingListCopyWith<$Res>? get activity {
     if (_self.activity == null) {
     return null;
   }
 
-  return $ActivityCopyWith<$Res>(_self.activity!, (value) {
+  return $ActivityBookingListCopyWith<$Res>(_self.activity!, (value) {
     return _then(_self.copyWith(activity: value));
   });
 }
@@ -622,42 +622,42 @@ $ActivityCopyWith<$Res>? get activity {
 
 
 /// @nodoc
-mixin _$Activity {
+mixin _$ActivityBookingList {
 
-@JsonKey(name: "id") int? get id;@JsonKey(name: "title") String? get title;@JsonKey(name: "imageUrl") String? get imageUrl;@JsonKey(name: "location") String? get location;@JsonKey(name: "category") String? get category;
-/// Create a copy of Activity
+@JsonKey(name: "id") int? get id;@JsonKey(name: "title") String? get title;@JsonKey(name: "imageUrl") String? get imageUrl;@JsonKey(name: "location") String? get location;
+/// Create a copy of ActivityBookingList
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$ActivityCopyWith<Activity> get copyWith => _$ActivityCopyWithImpl<Activity>(this as Activity, _$identity);
+$ActivityBookingListCopyWith<ActivityBookingList> get copyWith => _$ActivityBookingListCopyWithImpl<ActivityBookingList>(this as ActivityBookingList, _$identity);
 
-  /// Serializes this Activity to a JSON map.
+  /// Serializes this ActivityBookingList to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Activity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.category, category) || other.category == category));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivityBookingList&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.location, location) || other.location == location));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,imageUrl,location,category);
+int get hashCode => Object.hash(runtimeType,id,title,imageUrl,location);
 
 @override
 String toString() {
-  return 'Activity(id: $id, title: $title, imageUrl: $imageUrl, location: $location, category: $category)';
+  return 'ActivityBookingList(id: $id, title: $title, imageUrl: $imageUrl, location: $location)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $ActivityCopyWith<$Res>  {
-  factory $ActivityCopyWith(Activity value, $Res Function(Activity) _then) = _$ActivityCopyWithImpl;
+abstract mixin class $ActivityBookingListCopyWith<$Res>  {
+  factory $ActivityBookingListCopyWith(ActivityBookingList value, $Res Function(ActivityBookingList) _then) = _$ActivityBookingListCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "title") String? title,@JsonKey(name: "imageUrl") String? imageUrl,@JsonKey(name: "location") String? location,@JsonKey(name: "category") String? category
+@JsonKey(name: "id") int? id,@JsonKey(name: "title") String? title,@JsonKey(name: "imageUrl") String? imageUrl,@JsonKey(name: "location") String? location
 });
 
 
@@ -665,22 +665,21 @@ $Res call({
 
 }
 /// @nodoc
-class _$ActivityCopyWithImpl<$Res>
-    implements $ActivityCopyWith<$Res> {
-  _$ActivityCopyWithImpl(this._self, this._then);
+class _$ActivityBookingListCopyWithImpl<$Res>
+    implements $ActivityBookingListCopyWith<$Res> {
+  _$ActivityBookingListCopyWithImpl(this._self, this._then);
 
-  final Activity _self;
-  final $Res Function(Activity) _then;
+  final ActivityBookingList _self;
+  final $Res Function(ActivityBookingList) _then;
 
-/// Create a copy of Activity
+/// Create a copy of ActivityBookingList
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? title = freezed,Object? imageUrl = freezed,Object? location = freezed,Object? category = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? title = freezed,Object? imageUrl = freezed,Object? location = freezed,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -688,8 +687,8 @@ as String?,
 }
 
 
-/// Adds pattern-matching-related methods to [Activity].
-extension ActivityPatterns on Activity {
+/// Adds pattern-matching-related methods to [ActivityBookingList].
+extension ActivityBookingListPatterns on ActivityBookingList {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -702,10 +701,10 @@ extension ActivityPatterns on Activity {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Activity value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ActivityBookingList value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Activity() when $default != null:
+case _ActivityBookingList() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -724,10 +723,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Activity value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ActivityBookingList value)  $default,){
 final _that = this;
 switch (_that) {
-case _Activity():
+case _ActivityBookingList():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -745,10 +744,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Activity value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ActivityBookingList value)?  $default,){
 final _that = this;
 switch (_that) {
-case _Activity() when $default != null:
+case _ActivityBookingList() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -766,10 +765,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "title")  String? title, @JsonKey(name: "imageUrl")  String? imageUrl, @JsonKey(name: "location")  String? location, @JsonKey(name: "category")  String? category)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "title")  String? title, @JsonKey(name: "imageUrl")  String? imageUrl, @JsonKey(name: "location")  String? location)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Activity() when $default != null:
-return $default(_that.id,_that.title,_that.imageUrl,_that.location,_that.category);case _:
+case _ActivityBookingList() when $default != null:
+return $default(_that.id,_that.title,_that.imageUrl,_that.location);case _:
   return orElse();
 
 }
@@ -787,10 +786,10 @@ return $default(_that.id,_that.title,_that.imageUrl,_that.location,_that.categor
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "title")  String? title, @JsonKey(name: "imageUrl")  String? imageUrl, @JsonKey(name: "location")  String? location, @JsonKey(name: "category")  String? category)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "title")  String? title, @JsonKey(name: "imageUrl")  String? imageUrl, @JsonKey(name: "location")  String? location)  $default,) {final _that = this;
 switch (_that) {
-case _Activity():
-return $default(_that.id,_that.title,_that.imageUrl,_that.location,_that.category);case _:
+case _ActivityBookingList():
+return $default(_that.id,_that.title,_that.imageUrl,_that.location);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -807,10 +806,10 @@ return $default(_that.id,_that.title,_that.imageUrl,_that.location,_that.categor
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "title")  String? title, @JsonKey(name: "imageUrl")  String? imageUrl, @JsonKey(name: "location")  String? location, @JsonKey(name: "category")  String? category)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int? id, @JsonKey(name: "title")  String? title, @JsonKey(name: "imageUrl")  String? imageUrl, @JsonKey(name: "location")  String? location)?  $default,) {final _that = this;
 switch (_that) {
-case _Activity() when $default != null:
-return $default(_that.id,_that.title,_that.imageUrl,_that.location,_that.category);case _:
+case _ActivityBookingList() when $default != null:
+return $default(_that.id,_that.title,_that.imageUrl,_that.location);case _:
   return null;
 
 }
@@ -821,50 +820,49 @@ return $default(_that.id,_that.title,_that.imageUrl,_that.location,_that.categor
 /// @nodoc
 @JsonSerializable()
 
-class _Activity implements Activity {
-  const _Activity({@JsonKey(name: "id") this.id, @JsonKey(name: "title") this.title, @JsonKey(name: "imageUrl") this.imageUrl, @JsonKey(name: "location") this.location, @JsonKey(name: "category") this.category});
-  factory _Activity.fromJson(Map<String, dynamic> json) => _$ActivityFromJson(json);
+class _ActivityBookingList implements ActivityBookingList {
+  const _ActivityBookingList({@JsonKey(name: "id") this.id, @JsonKey(name: "title") this.title, @JsonKey(name: "imageUrl") this.imageUrl, @JsonKey(name: "location") this.location});
+  factory _ActivityBookingList.fromJson(Map<String, dynamic> json) => _$ActivityBookingListFromJson(json);
 
 @override@JsonKey(name: "id") final  int? id;
 @override@JsonKey(name: "title") final  String? title;
 @override@JsonKey(name: "imageUrl") final  String? imageUrl;
 @override@JsonKey(name: "location") final  String? location;
-@override@JsonKey(name: "category") final  String? category;
 
-/// Create a copy of Activity
+/// Create a copy of ActivityBookingList
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ActivityCopyWith<_Activity> get copyWith => __$ActivityCopyWithImpl<_Activity>(this, _$identity);
+_$ActivityBookingListCopyWith<_ActivityBookingList> get copyWith => __$ActivityBookingListCopyWithImpl<_ActivityBookingList>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$ActivityToJson(this, );
+  return _$ActivityBookingListToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Activity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.location, location) || other.location == location)&&(identical(other.category, category) || other.category == category));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivityBookingList&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.location, location) || other.location == location));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,imageUrl,location,category);
+int get hashCode => Object.hash(runtimeType,id,title,imageUrl,location);
 
 @override
 String toString() {
-  return 'Activity(id: $id, title: $title, imageUrl: $imageUrl, location: $location, category: $category)';
+  return 'ActivityBookingList(id: $id, title: $title, imageUrl: $imageUrl, location: $location)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$ActivityCopyWith<$Res> implements $ActivityCopyWith<$Res> {
-  factory _$ActivityCopyWith(_Activity value, $Res Function(_Activity) _then) = __$ActivityCopyWithImpl;
+abstract mixin class _$ActivityBookingListCopyWith<$Res> implements $ActivityBookingListCopyWith<$Res> {
+  factory _$ActivityBookingListCopyWith(_ActivityBookingList value, $Res Function(_ActivityBookingList) _then) = __$ActivityBookingListCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "id") int? id,@JsonKey(name: "title") String? title,@JsonKey(name: "imageUrl") String? imageUrl,@JsonKey(name: "location") String? location,@JsonKey(name: "category") String? category
+@JsonKey(name: "id") int? id,@JsonKey(name: "title") String? title,@JsonKey(name: "imageUrl") String? imageUrl,@JsonKey(name: "location") String? location
 });
 
 
@@ -872,22 +870,21 @@ $Res call({
 
 }
 /// @nodoc
-class __$ActivityCopyWithImpl<$Res>
-    implements _$ActivityCopyWith<$Res> {
-  __$ActivityCopyWithImpl(this._self, this._then);
+class __$ActivityBookingListCopyWithImpl<$Res>
+    implements _$ActivityBookingListCopyWith<$Res> {
+  __$ActivityBookingListCopyWithImpl(this._self, this._then);
 
-  final _Activity _self;
-  final $Res Function(_Activity) _then;
+  final _ActivityBookingList _self;
+  final $Res Function(_ActivityBookingList) _then;
 
-/// Create a copy of Activity
+/// Create a copy of ActivityBookingList
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? title = freezed,Object? imageUrl = freezed,Object? location = freezed,Object? category = freezed,}) {
-  return _then(_Activity(
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? title = freezed,Object? imageUrl = freezed,Object? location = freezed,}) {
+  return _then(_ActivityBookingList(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -897,22 +894,22 @@ as String?,
 
 
 /// @nodoc
-mixin _$Meta {
+mixin _$MetaBookingList {
 
 @JsonKey(name: "total") int? get total;@JsonKey(name: "page") int? get page;@JsonKey(name: "limit") int? get limit;@JsonKey(name: "totalPages") int? get totalPages;
-/// Create a copy of Meta
+/// Create a copy of MetaBookingList
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$MetaCopyWith<Meta> get copyWith => _$MetaCopyWithImpl<Meta>(this as Meta, _$identity);
+$MetaBookingListCopyWith<MetaBookingList> get copyWith => _$MetaBookingListCopyWithImpl<MetaBookingList>(this as MetaBookingList, _$identity);
 
-  /// Serializes this Meta to a JSON map.
+  /// Serializes this MetaBookingList to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Meta&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MetaBookingList&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -921,15 +918,15 @@ int get hashCode => Object.hash(runtimeType,total,page,limit,totalPages);
 
 @override
 String toString() {
-  return 'Meta(total: $total, page: $page, limit: $limit, totalPages: $totalPages)';
+  return 'MetaBookingList(total: $total, page: $page, limit: $limit, totalPages: $totalPages)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $MetaCopyWith<$Res>  {
-  factory $MetaCopyWith(Meta value, $Res Function(Meta) _then) = _$MetaCopyWithImpl;
+abstract mixin class $MetaBookingListCopyWith<$Res>  {
+  factory $MetaBookingListCopyWith(MetaBookingList value, $Res Function(MetaBookingList) _then) = _$MetaBookingListCopyWithImpl;
 @useResult
 $Res call({
 @JsonKey(name: "total") int? total,@JsonKey(name: "page") int? page,@JsonKey(name: "limit") int? limit,@JsonKey(name: "totalPages") int? totalPages
@@ -940,14 +937,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$MetaCopyWithImpl<$Res>
-    implements $MetaCopyWith<$Res> {
-  _$MetaCopyWithImpl(this._self, this._then);
+class _$MetaBookingListCopyWithImpl<$Res>
+    implements $MetaBookingListCopyWith<$Res> {
+  _$MetaBookingListCopyWithImpl(this._self, this._then);
 
-  final Meta _self;
-  final $Res Function(Meta) _then;
+  final MetaBookingList _self;
+  final $Res Function(MetaBookingList) _then;
 
-/// Create a copy of Meta
+/// Create a copy of MetaBookingList
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? total = freezed,Object? page = freezed,Object? limit = freezed,Object? totalPages = freezed,}) {
   return _then(_self.copyWith(
@@ -962,8 +959,8 @@ as int?,
 }
 
 
-/// Adds pattern-matching-related methods to [Meta].
-extension MetaPatterns on Meta {
+/// Adds pattern-matching-related methods to [MetaBookingList].
+extension MetaBookingListPatterns on MetaBookingList {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -976,10 +973,10 @@ extension MetaPatterns on Meta {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Meta value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _MetaBookingList value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Meta() when $default != null:
+case _MetaBookingList() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -998,10 +995,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Meta value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _MetaBookingList value)  $default,){
 final _that = this;
 switch (_that) {
-case _Meta():
+case _MetaBookingList():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -1019,10 +1016,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Meta value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _MetaBookingList value)?  $default,){
 final _that = this;
 switch (_that) {
-case _Meta() when $default != null:
+case _MetaBookingList() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -1042,7 +1039,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "total")  int? total, @JsonKey(name: "page")  int? page, @JsonKey(name: "limit")  int? limit, @JsonKey(name: "totalPages")  int? totalPages)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Meta() when $default != null:
+case _MetaBookingList() when $default != null:
 return $default(_that.total,_that.page,_that.limit,_that.totalPages);case _:
   return orElse();
 
@@ -1063,7 +1060,7 @@ return $default(_that.total,_that.page,_that.limit,_that.totalPages);case _:
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "total")  int? total, @JsonKey(name: "page")  int? page, @JsonKey(name: "limit")  int? limit, @JsonKey(name: "totalPages")  int? totalPages)  $default,) {final _that = this;
 switch (_that) {
-case _Meta():
+case _MetaBookingList():
 return $default(_that.total,_that.page,_that.limit,_that.totalPages);case _:
   throw StateError('Unexpected subclass');
 
@@ -1083,7 +1080,7 @@ return $default(_that.total,_that.page,_that.limit,_that.totalPages);case _:
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "total")  int? total, @JsonKey(name: "page")  int? page, @JsonKey(name: "limit")  int? limit, @JsonKey(name: "totalPages")  int? totalPages)?  $default,) {final _that = this;
 switch (_that) {
-case _Meta() when $default != null:
+case _MetaBookingList() when $default != null:
 return $default(_that.total,_that.page,_that.limit,_that.totalPages);case _:
   return null;
 
@@ -1095,29 +1092,29 @@ return $default(_that.total,_that.page,_that.limit,_that.totalPages);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _Meta implements Meta {
-  const _Meta({@JsonKey(name: "total") this.total, @JsonKey(name: "page") this.page, @JsonKey(name: "limit") this.limit, @JsonKey(name: "totalPages") this.totalPages});
-  factory _Meta.fromJson(Map<String, dynamic> json) => _$MetaFromJson(json);
+class _MetaBookingList implements MetaBookingList {
+  const _MetaBookingList({@JsonKey(name: "total") this.total, @JsonKey(name: "page") this.page, @JsonKey(name: "limit") this.limit, @JsonKey(name: "totalPages") this.totalPages});
+  factory _MetaBookingList.fromJson(Map<String, dynamic> json) => _$MetaBookingListFromJson(json);
 
 @override@JsonKey(name: "total") final  int? total;
 @override@JsonKey(name: "page") final  int? page;
 @override@JsonKey(name: "limit") final  int? limit;
 @override@JsonKey(name: "totalPages") final  int? totalPages;
 
-/// Create a copy of Meta
+/// Create a copy of MetaBookingList
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$MetaCopyWith<_Meta> get copyWith => __$MetaCopyWithImpl<_Meta>(this, _$identity);
+_$MetaBookingListCopyWith<_MetaBookingList> get copyWith => __$MetaBookingListCopyWithImpl<_MetaBookingList>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$MetaToJson(this, );
+  return _$MetaBookingListToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Meta&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MetaBookingList&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1126,15 +1123,15 @@ int get hashCode => Object.hash(runtimeType,total,page,limit,totalPages);
 
 @override
 String toString() {
-  return 'Meta(total: $total, page: $page, limit: $limit, totalPages: $totalPages)';
+  return 'MetaBookingList(total: $total, page: $page, limit: $limit, totalPages: $totalPages)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$MetaCopyWith<$Res> implements $MetaCopyWith<$Res> {
-  factory _$MetaCopyWith(_Meta value, $Res Function(_Meta) _then) = __$MetaCopyWithImpl;
+abstract mixin class _$MetaBookingListCopyWith<$Res> implements $MetaBookingListCopyWith<$Res> {
+  factory _$MetaBookingListCopyWith(_MetaBookingList value, $Res Function(_MetaBookingList) _then) = __$MetaBookingListCopyWithImpl;
 @override @useResult
 $Res call({
 @JsonKey(name: "total") int? total,@JsonKey(name: "page") int? page,@JsonKey(name: "limit") int? limit,@JsonKey(name: "totalPages") int? totalPages
@@ -1145,17 +1142,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$MetaCopyWithImpl<$Res>
-    implements _$MetaCopyWith<$Res> {
-  __$MetaCopyWithImpl(this._self, this._then);
+class __$MetaBookingListCopyWithImpl<$Res>
+    implements _$MetaBookingListCopyWith<$Res> {
+  __$MetaBookingListCopyWithImpl(this._self, this._then);
 
-  final _Meta _self;
-  final $Res Function(_Meta) _then;
+  final _MetaBookingList _self;
+  final $Res Function(_MetaBookingList) _then;
 
-/// Create a copy of Meta
+/// Create a copy of MetaBookingList
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? total = freezed,Object? page = freezed,Object? limit = freezed,Object? totalPages = freezed,}) {
-  return _then(_Meta(
+  return _then(_MetaBookingList(
 total: freezed == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int?,page: freezed == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
 as int?,limit: freezed == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable

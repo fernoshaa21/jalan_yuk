@@ -1,4 +1,4 @@
-import '../../../domain/entities/bookings/bookings.dart';
+import 'package:jalan_yuk/domain/entities/bookings/bookings.dart';
 
 enum BookingStatus { initial, loading, success, error }
 
