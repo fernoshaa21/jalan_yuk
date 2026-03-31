@@ -76,7 +76,7 @@ class _Env {
   factory _Env.dev(String fcmToken) {
     return _Env(
       appName: 'Dev',
-      baseUrl: 'http://localhost:3000',
+      baseUrl: 'https://jalan-yuk-api.onrender.com',
       envName: 'dev',
       fcmToken: fcmToken,
       fcmPrefix: 'dev',
